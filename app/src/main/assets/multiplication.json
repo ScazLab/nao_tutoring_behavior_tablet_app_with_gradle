@@ -1,0 +1,772 @@
+[
+ {
+	"Question" : "What is 5 X 7?",
+	"Spoken Question" : "What is five times seven?", 
+	"Answer" : 35,
+	"Spoken Answer" : "The correct answer is thirty-five."
+ },
+
+ {
+	"Question" : "What is 5 X 5?",
+	"Spoken Question" : "What is five times five?", 
+	"Answer" : 25,
+	"Spoken Answer" : "The correct answer is twenty-five."
+ },
+
+ {
+	"Question" : "What is 5 X 9?",
+	"Spoken Question" : "What is five times nine?", 
+	"Answer" : 45,
+	"Spoken Answer" : "The correct answer is forty-five."
+ },
+
+ {
+	"Question" : "What is 5 X 2?",
+	"Spoken Question" : "What is five times two?", 
+	"Answer" : 10,
+	"Spoken Answer" : "The correct answer is ten."
+ },
+
+ {
+	"Question" : "What is 5 X 4?",
+	"Spoken Question" : "What is five times four?", 
+	"Answer" : 20,
+	"Spoken Answer" : "The correct answer is twenty."
+ },
+
+ {
+	"Question" : "What is 5 X 6?",
+	"Spoken Question" : "What is five times six?", 
+	"Answer" : 30,
+	"Spoken Answer" : "The correct answer is thirty."
+ },
+
+ {
+	"Question" : "What is 5 X 1?",
+	"Spoken Question" : "What is five times one?", 
+	"Answer" : 5,
+	"Spoken Answer" : "The correct answer is five."
+ },
+
+ {
+	"Question" : "What is 5 X 8?",
+	"Spoken Question" : "What is five times eight?", 
+	"Answer" : 40,
+	"Spoken Answer" : "The correct answer is forty."
+ },
+
+ {
+	"Question" : "What is 5 X 0?",
+	"Spoken Question" : "What is five times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 5 X 3?",
+	"Spoken Question" : "What is five times three?", 
+	"Answer" : 15,
+	"Spoken Answer" : "The correct answer is fifteen."
+ },
+
+ {
+	"Question" : "What is 8 X 7?",
+	"Spoken Question" : "What is eight times seven?", 
+	"Answer" : 56,
+	"Spoken Answer" : "The correct answer is fifty-six."
+ },
+
+ {
+	"Question" : "What is 8 X 5?",
+	"Spoken Question" : "What is eight times five?", 
+	"Answer" : 40,
+	"Spoken Answer" : "The correct answer is forty."
+ },
+
+ {
+	"Question" : "What is 8 X 9?",
+	"Spoken Question" : "What is eight times nine?", 
+	"Answer" : 72,
+	"Spoken Answer" : "The correct answer is seventy-two."
+ },
+
+ {
+	"Question" : "What is 8 X 2?",
+	"Spoken Question" : "What is eight times two?", 
+	"Answer" : 16,
+	"Spoken Answer" : "The correct answer is sixteen."
+ },
+
+ {
+	"Question" : "What is 8 X 4?",
+	"Spoken Question" : "What is eight times four?", 
+	"Answer" : 32,
+	"Spoken Answer" : "The correct answer is thirty-two."
+ },
+
+ {
+	"Question" : "What is 8 X 6?",
+	"Spoken Question" : "What is eight times six?", 
+	"Answer" : 48,
+	"Spoken Answer" : "The correct answer is forty-eight."
+ },
+
+ {
+	"Question" : "What is 8 X 1?",
+	"Spoken Question" : "What is eight times one?", 
+	"Answer" : 8,
+	"Spoken Answer" : "The correct answer is eight."
+ },
+
+ {
+	"Question" : "What is 8 X 8?",
+	"Spoken Question" : "What is eight times eight?", 
+	"Answer" : 64,
+	"Spoken Answer" : "The correct answer is sixty-four."
+ },
+
+ {
+	"Question" : "What is 8 X 0?",
+	"Spoken Question" : "What is eight times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 8 X 3?",
+	"Spoken Question" : "What is eight times three?", 
+	"Answer" : 24,
+	"Spoken Answer" : "The correct answer is twenty-four."
+ },
+
+ {
+	"Question" : "What is 2 X 7?",
+	"Spoken Question" : "What is two times seven?", 
+	"Answer" : 14,
+	"Spoken Answer" : "The correct answer is fourteen."
+ },
+
+ {
+	"Question" : "What is 2 X 5?",
+	"Spoken Question" : "What is two times five?", 
+	"Answer" : 10,
+	"Spoken Answer" : "The correct answer is ten."
+ },
+
+ {
+	"Question" : "What is 2 X 9?",
+	"Spoken Question" : "What is two times nine?", 
+	"Answer" : 18,
+	"Spoken Answer" : "The correct answer is eighteen."
+ },
+
+ {
+	"Question" : "What is 2 X 2?",
+	"Spoken Question" : "What is two times two?", 
+	"Answer" : 4,
+	"Spoken Answer" : "The correct answer is four."
+ },
+
+ {
+	"Question" : "What is 2 X 4?",
+	"Spoken Question" : "What is two times four?", 
+	"Answer" : 8,
+	"Spoken Answer" : "The correct answer is eight."
+ },
+
+ {
+	"Question" : "What is 2 X 6?",
+	"Spoken Question" : "What is two times six?", 
+	"Answer" : 12,
+	"Spoken Answer" : "The correct answer is twelve."
+ },
+
+ {
+	"Question" : "What is 2 X 1?",
+	"Spoken Question" : "What is two times one?", 
+	"Answer" : 2,
+	"Spoken Answer" : "The correct answer is two."
+ },
+
+ {
+	"Question" : "What is 2 X 8?",
+	"Spoken Question" : "What is two times eight?", 
+	"Answer" : 16,
+	"Spoken Answer" : "The correct answer is sixteen."
+ },
+
+ {
+	"Question" : "What is 2 X 0?",
+	"Spoken Question" : "What is two times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 2 X 3?",
+	"Spoken Question" : "What is two times three?", 
+	"Answer" : 6,
+	"Spoken Answer" : "The correct answer is six."
+ },
+
+ {
+	"Question" : "What is 9 X 7?",
+	"Spoken Question" : "What is nine times seven?", 
+	"Answer" : 63,
+	"Spoken Answer" : "The correct answer is sixty-three."
+ },
+
+ {
+	"Question" : "What is 9 X 5?",
+	"Spoken Question" : "What is nine times five?", 
+	"Answer" : 45,
+	"Spoken Answer" : "The correct answer is forty-five."
+ },
+
+ {
+	"Question" : "What is 9 X 9?",
+	"Spoken Question" : "What is nine times nine?", 
+	"Answer" : 81,
+	"Spoken Answer" : "The correct answer is eighty-one."
+ },
+
+ {
+	"Question" : "What is 9 X 2?",
+	"Spoken Question" : "What is nine times two?", 
+	"Answer" : 18,
+	"Spoken Answer" : "The correct answer is eighteen."
+ },
+
+ {
+	"Question" : "What is 9 X 4?",
+	"Spoken Question" : "What is nine times four?", 
+	"Answer" : 36,
+	"Spoken Answer" : "The correct answer is thirty-six."
+ },
+
+ {
+	"Question" : "What is 9 X 6?",
+	"Spoken Question" : "What is nine times six?", 
+	"Answer" : 54,
+	"Spoken Answer" : "The correct answer is fifty-four."
+ },
+
+ {
+	"Question" : "What is 9 X 1?",
+	"Spoken Question" : "What is nine times one?", 
+	"Answer" : 9,
+	"Spoken Answer" : "The correct answer is nine."
+ },
+
+ {
+	"Question" : "What is 9 X 8?",
+	"Spoken Question" : "What is nine times eight?", 
+	"Answer" : 72,
+	"Spoken Answer" : "The correct answer is seventy-two."
+ },
+
+ {
+	"Question" : "What is 9 X 0?",
+	"Spoken Question" : "What is nine times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 9 X 3?",
+	"Spoken Question" : "What is nine times three?", 
+	"Answer" : 27,
+	"Spoken Answer" : "The correct answer is twenty-seven."
+ },
+
+ {
+	"Question" : "What is 1 X 7?",
+	"Spoken Question" : "What is one times seven?", 
+	"Answer" : 7,
+	"Spoken Answer" : "The correct answer is seven."
+ },
+
+ {
+	"Question" : "What is 1 X 5?",
+	"Spoken Question" : "What is one times five?", 
+	"Answer" : 5,
+	"Spoken Answer" : "The correct answer is five."
+ },
+
+ {
+	"Question" : "What is 1 X 9?",
+	"Spoken Question" : "What is one times nine?", 
+	"Answer" : 9,
+	"Spoken Answer" : "The correct answer is nine."
+ },
+
+ {
+	"Question" : "What is 1 X 2?",
+	"Spoken Question" : "What is one times two?", 
+	"Answer" : 2,
+	"Spoken Answer" : "The correct answer is two."
+ },
+
+ {
+	"Question" : "What is 1 X 4?",
+	"Spoken Question" : "What is one times four?", 
+	"Answer" : 4,
+	"Spoken Answer" : "The correct answer is four."
+ },
+
+ {
+	"Question" : "What is 1 X 6?",
+	"Spoken Question" : "What is one times six?", 
+	"Answer" : 6,
+	"Spoken Answer" : "The correct answer is six."
+ },
+
+ {
+	"Question" : "What is 1 X 1?",
+	"Spoken Question" : "What is one times one?", 
+	"Answer" : 1,
+	"Spoken Answer" : "The correct answer is one."
+ },
+
+ {
+	"Question" : "What is 1 X 8?",
+	"Spoken Question" : "What is one times eight?", 
+	"Answer" : 8,
+	"Spoken Answer" : "The correct answer is eight."
+ },
+
+ {
+	"Question" : "What is 1 X 0?",
+	"Spoken Question" : "What is one times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 1 X 3?",
+	"Spoken Question" : "What is one times three?", 
+	"Answer" : 3,
+	"Spoken Answer" : "The correct answer is three."
+ },
+
+ {
+	"Question" : "What is 3 X 7?",
+	"Spoken Question" : "What is three times seven?", 
+	"Answer" : 21,
+	"Spoken Answer" : "The correct answer is twenty-one."
+ },
+
+ {
+	"Question" : "What is 3 X 5?",
+	"Spoken Question" : "What is three times five?", 
+	"Answer" : 15,
+	"Spoken Answer" : "The correct answer is fifteen."
+ },
+
+ {
+	"Question" : "What is 3 X 9?",
+	"Spoken Question" : "What is three times nine?", 
+	"Answer" : 27,
+	"Spoken Answer" : "The correct answer is twenty-seven."
+ },
+
+ {
+	"Question" : "What is 3 X 2?",
+	"Spoken Question" : "What is three times two?", 
+	"Answer" : 6,
+	"Spoken Answer" : "The correct answer is six."
+ },
+
+ {
+	"Question" : "What is 3 X 4?",
+	"Spoken Question" : "What is three times four?", 
+	"Answer" : 12,
+	"Spoken Answer" : "The correct answer is twelve."
+ },
+
+ {
+	"Question" : "What is 3 X 6?",
+	"Spoken Question" : "What is three times six?", 
+	"Answer" : 18,
+	"Spoken Answer" : "The correct answer is eighteen."
+ },
+
+ {
+	"Question" : "What is 3 X 1?",
+	"Spoken Question" : "What is three times one?", 
+	"Answer" : 3,
+	"Spoken Answer" : "The correct answer is three."
+ },
+
+ {
+	"Question" : "What is 3 X 8?",
+	"Spoken Question" : "What is three times eight?", 
+	"Answer" : 24,
+	"Spoken Answer" : "The correct answer is twenty-four."
+ },
+
+ {
+	"Question" : "What is 3 X 0?",
+	"Spoken Question" : "What is three times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 3 X 3?",
+	"Spoken Question" : "What is three times three?", 
+	"Answer" : 9,
+	"Spoken Answer" : "The correct answer is nine."
+ },
+
+ {
+	"Question" : "What is 4 X 7?",
+	"Spoken Question" : "What is four times seven?", 
+	"Answer" : 28,
+	"Spoken Answer" : "The correct answer is twenty-eight."
+ },
+
+ {
+	"Question" : "What is 4 X 5?",
+	"Spoken Question" : "What is four times five?", 
+	"Answer" : 20,
+	"Spoken Answer" : "The correct answer is twenty."
+ },
+
+ {
+	"Question" : "What is 4 X 9?",
+	"Spoken Question" : "What is four times nine?", 
+	"Answer" : 36,
+	"Spoken Answer" : "The correct answer is thirty-six."
+ },
+
+ {
+	"Question" : "What is 4 X 2?",
+	"Spoken Question" : "What is four times two?", 
+	"Answer" : 8,
+	"Spoken Answer" : "The correct answer is eight."
+ },
+
+ {
+	"Question" : "What is 4 X 4?",
+	"Spoken Question" : "What is four times four?", 
+	"Answer" : 16,
+	"Spoken Answer" : "The correct answer is sixteen."
+ },
+
+ {
+	"Question" : "What is 4 X 6?",
+	"Spoken Question" : "What is four times six?", 
+	"Answer" : 24,
+	"Spoken Answer" : "The correct answer is twenty-four."
+ },
+
+ {
+	"Question" : "What is 4 X 1?",
+	"Spoken Question" : "What is four times one?", 
+	"Answer" : 4,
+	"Spoken Answer" : "The correct answer is four."
+ },
+
+ {
+	"Question" : "What is 4 X 8?",
+	"Spoken Question" : "What is four times eight?", 
+	"Answer" : 32,
+	"Spoken Answer" : "The correct answer is thirty-two."
+ },
+
+ {
+	"Question" : "What is 4 X 0?",
+	"Spoken Question" : "What is four times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 4 X 3?",
+	"Spoken Question" : "What is four times three?", 
+	"Answer" : 12,
+	"Spoken Answer" : "The correct answer is twelve."
+ },
+
+ {
+	"Question" : "What is 0 X 7?",
+	"Spoken Question" : "What is zero times seven?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 5?",
+	"Spoken Question" : "What is zero times five?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 9?",
+	"Spoken Question" : "What is zero times nine?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 2?",
+	"Spoken Question" : "What is zero times two?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 4?",
+	"Spoken Question" : "What is zero times four?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 6?",
+	"Spoken Question" : "What is zero times six?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 1?",
+	"Spoken Question" : "What is zero times one?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 8?",
+	"Spoken Question" : "What is zero times eight?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 0?",
+	"Spoken Question" : "What is zero times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 0 X 3?",
+	"Spoken Question" : "What is zero times three?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 6 X 7?",
+	"Spoken Question" : "What is six times seven?", 
+	"Answer" : 42,
+	"Spoken Answer" : "The correct answer is forty-two."
+ },
+
+ {
+	"Question" : "What is 6 X 5?",
+	"Spoken Question" : "What is six times five?", 
+	"Answer" : 30,
+	"Spoken Answer" : "The correct answer is thirty."
+ },
+
+ {
+	"Question" : "What is 6 X 9?",
+	"Spoken Question" : "What is six times nine?", 
+	"Answer" : 54,
+	"Spoken Answer" : "The correct answer is fifty-four."
+ },
+
+ {
+	"Question" : "What is 6 X 2?",
+	"Spoken Question" : "What is six times two?", 
+	"Answer" : 12,
+	"Spoken Answer" : "The correct answer is twelve."
+ },
+
+ {
+	"Question" : "What is 6 X 4?",
+	"Spoken Question" : "What is six times four?", 
+	"Answer" : 24,
+	"Spoken Answer" : "The correct answer is twenty-four."
+ },
+
+ {
+	"Question" : "What is 6 X 6?",
+	"Spoken Question" : "What is six times six?", 
+	"Answer" : 36,
+	"Spoken Answer" : "The correct answer is thirty-six."
+ },
+
+ {
+	"Question" : "What is 6 X 1?",
+	"Spoken Question" : "What is six times one?", 
+	"Answer" : 6,
+	"Spoken Answer" : "The correct answer is six."
+ },
+
+ {
+	"Question" : "What is 6 X 8?",
+	"Spoken Question" : "What is six times eight?", 
+	"Answer" : 48,
+	"Spoken Answer" : "The correct answer is forty-eight."
+ },
+
+ {
+	"Question" : "What is 6 X 0?",
+	"Spoken Question" : "What is six times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 6 X 3?",
+	"Spoken Question" : "What is six times three?", 
+	"Answer" : 18,
+	"Spoken Answer" : "The correct answer is eighteen."
+ },
+
+ {
+	"Question" : "What is 8 X 7?",
+	"Spoken Question" : "What is eight times seven?", 
+	"Answer" : 56,
+	"Spoken Answer" : "The correct answer is fifty-six."
+ },
+
+ {
+	"Question" : "What is 8 X 5?",
+	"Spoken Question" : "What is eight times five?", 
+	"Answer" : 40,
+	"Spoken Answer" : "The correct answer is forty."
+ },
+
+ {
+	"Question" : "What is 8 X 9?",
+	"Spoken Question" : "What is eight times nine?", 
+	"Answer" : 72,
+	"Spoken Answer" : "The correct answer is seventy-two."
+ },
+
+ {
+	"Question" : "What is 8 X 2?",
+	"Spoken Question" : "What is eight times two?", 
+	"Answer" : 16,
+	"Spoken Answer" : "The correct answer is sixteen."
+ },
+
+ {
+	"Question" : "What is 8 X 4?",
+	"Spoken Question" : "What is eight times four?", 
+	"Answer" : 32,
+	"Spoken Answer" : "The correct answer is thirty-two."
+ },
+
+ {
+	"Question" : "What is 8 X 6?",
+	"Spoken Question" : "What is eight times six?", 
+	"Answer" : 48,
+	"Spoken Answer" : "The correct answer is forty-eight."
+ },
+
+ {
+	"Question" : "What is 8 X 1?",
+	"Spoken Question" : "What is eight times one?", 
+	"Answer" : 8,
+	"Spoken Answer" : "The correct answer is eight."
+ },
+
+ {
+	"Question" : "What is 8 X 8?",
+	"Spoken Question" : "What is eight times eight?", 
+	"Answer" : 64,
+	"Spoken Answer" : "The correct answer is sixty-four."
+ },
+
+ {
+	"Question" : "What is 8 X 0?",
+	"Spoken Question" : "What is eight times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 8 X 3?",
+	"Spoken Question" : "What is eight times three?", 
+	"Answer" : 24,
+	"Spoken Answer" : "The correct answer is twenty-four."
+ },
+
+ {
+	"Question" : "What is 7 X 7?",
+	"Spoken Question" : "What is seven times seven?", 
+	"Answer" : 49,
+	"Spoken Answer" : "The correct answer is forty-nine."
+ },
+
+ {
+	"Question" : "What is 7 X 5?",
+	"Spoken Question" : "What is seven times five?", 
+	"Answer" : 35,
+	"Spoken Answer" : "The correct answer is thirty-five."
+ },
+
+ {
+	"Question" : "What is 7 X 9?",
+	"Spoken Question" : "What is seven times nine?", 
+	"Answer" : 63,
+	"Spoken Answer" : "The correct answer is sixty-three."
+ },
+
+ {
+	"Question" : "What is 7 X 2?",
+	"Spoken Question" : "What is seven times two?", 
+	"Answer" : 14,
+	"Spoken Answer" : "The correct answer is fourteen."
+ },
+
+ {
+	"Question" : "What is 7 X 4?",
+	"Spoken Question" : "What is seven times four?", 
+	"Answer" : 28,
+	"Spoken Answer" : "The correct answer is twenty-eight."
+ },
+
+ {
+	"Question" : "What is 7 X 6?",
+	"Spoken Question" : "What is seven times six?", 
+	"Answer" : 42,
+	"Spoken Answer" : "The correct answer is forty-two."
+ },
+
+ {
+	"Question" : "What is 7 X 1?",
+	"Spoken Question" : "What is seven times one?", 
+	"Answer" : 7,
+	"Spoken Answer" : "The correct answer is seven."
+ },
+
+ {
+	"Question" : "What is 7 X 8?",
+	"Spoken Question" : "What is seven times eight?", 
+	"Answer" : 56,
+	"Spoken Answer" : "The correct answer is fifty-six."
+ },
+
+ {
+	"Question" : "What is 7 X 0?",
+	"Spoken Question" : "What is seven times zero?", 
+	"Answer" : 0,
+	"Spoken Answer" : "The correct answer is zero."
+ },
+
+ {
+	"Question" : "What is 7 X 3?",
+	"Spoken Question" : "What is seven times three?", 
+	"Answer" : 21,
+	"Spoken Answer" : "The correct answer is twenty-one."
+ },
+
+]

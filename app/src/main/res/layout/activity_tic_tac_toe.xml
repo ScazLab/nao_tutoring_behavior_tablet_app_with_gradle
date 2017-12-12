@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="60dp"
+        android:text="Tic Tac Toe"
+        android:textSize="40sp" />
+
+    <GridLayout
+        android:id="@+id/ticTacToeBoard"
+        android:layout_height="300dp"
+        android:layout_width="300dp"
+        android:layout_gravity="center"
+        android:columnCount="3"
+        android:rowCount="3">
+
+        <Button
+            android:id="@+id/boardButton0"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+        <Button
+            android:id="@+id/boardButton1"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+        <Button
+            android:id="@+id/boardButton2"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+        <Button
+            android:id="@+id/boardButton3"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+        <Button
+            android:id="@+id/boardButton4"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+        <Button
+            android:id="@+id/boardButton5"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+        <Button
+            android:id="@+id/boardButton6"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+        <Button
+            android:id="@+id/boardButton7"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+        <Button
+            android:id="@+id/boardButton8"
+            android:clickable="true"
+            android:onClick="boardButtonPressed"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="start"
+            android:textSize="60sp" />
+    </GridLayout>
+
+    <TextView
+        android:id="@+id/instructions"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="250dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textSize="30sp"
+        android:gravity="center" />
+
+    <Button
+        android:id="@+id/returnButton"
+        android:clickable="true"
+        android:onClick="returnButtonPressed"
+        android:layout_height="50dp"
+        android:layout_width="300dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="60dp"
+        android:text="Return to Tutoring Session"
+        android:textSize="20sp" />
+</FrameLayout>

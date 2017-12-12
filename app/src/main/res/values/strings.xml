@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Behaviors</string>
+    <string name="title_activity_question">QuestionActivity</string>
+    <string name="title_activity_break">BreakActivity</string>
+    <string name="title_activity_math_control">MathControl</string>
+    <string name="title_activity_tic_tac_toe">TicTacToeActivity</string>
+
+    <string name="tic_tac_toe">Tic-Tac-Toe</string>
+    <string name="return_to_tutoring_session">Return to tutoring session</string>
+    <string name="stretch_break">Stretch Break</string>
+    <string name="follow_nao_s_lead">Follow Nao\'s lead!</string>
+    <string name="focus_game">Focus Game</string>
+    <string name="press_different_button">Press the button that has a different symbol than all the rest!</string>
+    <string name="mindfulness_break">Relaxation Break</string>
+
+    <string name="order_of_operations_lesson">Order of Operations Lesson</string>
+    <string name="lesson_string1">When we have addition and subtraction in a problem, we just solve the problem in order, from left to right.</string>
+    <string name="lesson_string2">When we have multiplication, addition, and subtraction in the problem, we have to do the multiplication first! Let\'s look at the problem below:</string>
+    <string name="lets_try_it">Let\'s look at the problem below: </string>
+
+    <string name="continue_lesson">Continue lesson</string>
+    <string name="begin_tutoring_session">Begin tutoring session</string>
+    <string name="title_activity_lesson">LessonActivity</string>
+</resources>
