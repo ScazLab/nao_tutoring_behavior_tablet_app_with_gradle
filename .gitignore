@@ -1,0 +1,7 @@
+build/
+build/*
+.gradle/
+.idea/
+app/app.iml
+local.properties
+nao_tutoring_behavior_tablet_app_with_gradle.iml
