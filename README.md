@@ -1,5 +1,9 @@
 # nao_tutoring_behavior_tablet_app
 
+This repository contains code of the tablet application for the adaptive behavior tutoring systems project.
+
+To see the final report and other deliverables associated with this senior project code, see [here](http://zoo.cs.yale.edu/classes/cs490/17-18a/zakrzewska.aleksandrakonstancja.akz4/) (Yale Only).
+
 ## Installation
 This is the repository with build files and other things you may not want to clone unless you want to build this project in Android Studio.
 
