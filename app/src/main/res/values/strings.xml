@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Behaviors</string>
+    <string name="app_name">TutoringAdaptiveHelp</string>
     <string name="title_activity_question">QuestionActivity</string>
     <string name="title_activity_break">BreakActivity</string>
     <string name="title_activity_math_control">MathControl</string>
