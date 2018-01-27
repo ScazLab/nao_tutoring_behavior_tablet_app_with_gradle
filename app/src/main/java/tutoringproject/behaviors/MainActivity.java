@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.start_screen);
 
         iPandPort = (EditText) findViewById(R.id.IPandPort);
-        iPandPort.setText("172.27.185.17:9090");
+        iPandPort.setText("172.27.211.109:9090");
         connectButton = (Button) findViewById(R.id.ConnectButton);
         connectionStatus = (TextView) findViewById(R.id.ConnectionStatus);
         startMathButton = (Button)findViewById(R.id.startMathButton);
@@ -71,7 +71,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         try {
             sessionNum = sessionNumberBox.getText().toString();
-            if (sessionNum.equals("") || Integer.parseInt(sessionNum)> 4) {
+            if (sessionNum.equals("") || Integer.parseInt(sessionNum)> 5) {
                 sessionNum = "1";
             }
         } catch(NumberFormatException e) {
@@ -144,7 +144,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     publishProgress(message);
                     onProgressUpdate(message);
 
-                    Log.e("MainActivity", "Message received from server: hiding options");
+                    Log.e("MainActivity", "Message received from server: "+message);
 
 
                 }

@@ -133,6 +133,10 @@ public class TCPClient {
                                     sessionOwner.messageReceived(serverMsg);
                                     Log.e("TCP Client", "using serverMsg:" + serverMsg);
                                 }
+                                else if (!serverMessage.equals(serverMsg)){ //aditi: Should handle the case when SHOWSTRUCTURE messages are getting lost
+                                    sessionOwner.messageReceived(serverMsg);
+                                    Log.e("TCP Client", "THE TWO PRINTED MESSAGES ARE NOT THE SAME, using serverMsg: " + serverMsg);
+                                }
                                 else {
                                     sessionOwner.messageReceived(serverMessage);
                                     Log.e("TCP Client", "using serverMessage:" + serverMessage);

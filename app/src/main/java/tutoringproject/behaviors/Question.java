@@ -10,16 +10,18 @@ public class Question {
     public int questionID;
     public String denominator;
     public String  numerator;
-    public int answerText;
+    public String answerText;
+    public String spokenQuestion;
     public String wordProblem;
 
     public Question (JSONObject question){
         try {
-            // these are the keys that should be in the json giveing questions
+            // these are the keys that should be in the json giving questions
             questionID = question.getInt(Questions.KEY_QUESTION_ID);
             denominator = question.getString(Questions.KEY_DENOMINATOR);
             numerator = question.getString(Questions.KEY_NUMERATOR);
-            answerText = question.getInt(Questions.KEY_ANSWER);
+            answerText = question.getString(Questions.KEY_ANSWER);
+            spokenQuestion = question.getString(Questions.KEY_SPOKEN_QUESTION);
             wordProblem = question.getString(Questions.KEY_WORD_PROBLEM); // this string is empty unless the problem is a word problem
 
         }catch (Exception e){

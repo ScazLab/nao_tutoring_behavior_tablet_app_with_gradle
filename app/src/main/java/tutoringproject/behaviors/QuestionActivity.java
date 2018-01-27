@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -38,7 +39,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
     int expGroup = 1; // TODO change
 
-    MathControl mathContol;
+    MathControl mathControl;
     TextView numerator;
     TextView denominator;
     Button submitButton;
@@ -64,6 +65,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     int showingHint = 0;
     int exampleStep = 0;
     boolean keyboardEnabled = true;
+    boolean inTutorialMode = false;
 
 
     private KeyboardView mKeyboardView;
@@ -92,6 +94,15 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         final Drawable incorrect_remainder = ContextCompat.getDrawable(this, R.drawable.remainder_incorrect); // but using the same drawable file causes the answer to change size. I have no idea why.
         final Drawable nextButtonCorrect = ContextCompat.getDrawable(this, R.drawable.answer_correct_border_focused);
 
+        final Drawable input_unfocused = ContextCompat.getDrawable(this, R.drawable.input_background);
+        final Drawable input_focused = ContextCompat.getDrawable(this, R.drawable.input_focused);
+
+        final Drawable answer_unfocused = ContextCompat.getDrawable(this, R.drawable.answer_background);
+        final Drawable answer_focused = ContextCompat.getDrawable(this, R.drawable.answer_focused);
+
+        final Drawable remainder_unfocused = ContextCompat.getDrawable(this, R.drawable.remainder_background);
+        final Drawable remainder_focused = ContextCompat.getDrawable(this, R.drawable.remainder_focused);
+
         Keyboard mKeyboard = new Keyboard(getApplicationContext(), R.xml.numbers_keyboard);
         mKeyboardView = (KeyboardView) findViewById(R.id.keyboardview);
         mKeyboardView.setKeyboard(mKeyboard);
@@ -113,18 +124,24 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     //Here check the primaryCode to see which key is pressed
                     //based on the android:codes property
                     EditText target = (EditText) getWindow().getCurrentFocus();
+                    System.out.println("In KEYBOARD ONKEY METHOD, target is: " + getResources().getResourceEntryName(target.getId()));
 
-                    if (primaryCode >= 0 && primaryCode <= 9) {
-                        if (target.getText().toString().length() < MathControl.MAX_NUM_DIGITS)
-                            target.setText(target.getText().toString() + primaryCode + "");
-                    } else if (primaryCode == -1) {
-                        if (target.getText().toString().length() > 0) {
-                            String old_string = target.getText().toString();
-                            int string_length = old_string.length();
+                    int num_digits = MathControl.MAX_NUM_DIGITS;
+                    if (!answerText.hasFocus())     num_digits = MathControl.NUM_DIGITS_FOR_STRUCTURE;
 
-                            String new_string = old_string.substring(0, string_length - 1);
+                    if (target.isEnabled()) { // aditi - keyboard should only work in textboxes that are ENABLED
+                        if (primaryCode >= 0 && primaryCode <= 9) {
+                            if (target.getText().toString().length() < num_digits)
+                                target.setText(target.getText().toString() + primaryCode + "");
+                        } else if (primaryCode == -1) {
+                            if (target.getText().toString().length() > 0) {
+                                String old_string = target.getText().toString();
+                                int string_length = old_string.length();
 
-                            target.setText(new_string);
+                                String new_string = old_string.substring(0, string_length - 1);
+
+                                target.setText(new_string);
+                            }
                         }
                     }
                 }
@@ -157,14 +174,15 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         });
 
         // get the first question and display it
-        mathContol = new MathControl(this);
+        mathControl = new MathControl(this);
         if (currentQuestion == null)
-            currentQuestion = mathContol.getQuestion(level, number);
+            currentQuestion = mathControl.getQuestion(level, number);
 
         numerator.setText(currentQuestion.numerator.replace("", "   ").trim());
         denominator.setText(currentQuestion.denominator);
+        String firstQuestionSpoken = currentQuestion.spokenQuestion;
 
-        TCPClient.singleton.sendMessage("SHOWING-QUESTION");
+        TCPClient.singleton.sendMessage("SHOWING-QUESTION;"+firstQuestionSpoken);
 
         // these are views in the main question pane
         submitButton = (Button) findViewById(R.id.submitButton);
@@ -218,6 +236,234 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         answerBoxes[4] = (NoImeEditText) findViewById(R.id.AnsBox5);
         answerBoxes[5] = (NoImeEditText) findViewById(R.id.AnsBox6);
         answerBoxes[6] = (NoImeEditText) findViewById(R.id.AnsBox7);
+
+        //try to create a touch listener for each of the rBoxes to fix focus issue
+        for (int i_track=0; i_track<rBoxes.length; i_track++) {
+            final int i = i_track;
+            for (int j_track=0; j_track<rBoxes[i_track].length; j_track++){
+                final int j = j_track;
+                if (rBoxes[i][j]!=null){
+                    rBoxes[i][j].setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent event) {
+                            if (event.getAction()==MotionEvent.ACTION_UP) {
+                                System.out.println("IN ONTOUCHLISTENER FOR rBoxes[" + i + "][" + j + "]");
+
+                                if (rBoxes[i][j].isEnabled() && rBoxes[i][j].isFocusable()) {
+                                    //System.out.println("Made it into IF block before looping through all boxes!");
+                                    for (int row = 0; row < rBoxes.length; row++) {
+                                        for (int col = 0; col < rBoxes[row].length; col++) {
+                                            if (rBoxes[row][col] != null) {
+                                                //System.out.println("row is " + row + " and col is " + col);
+                                                if (row == i && col == j) {
+                                                    //System.out.println("Setting FOCUS for rBoxes[" + row + "][" + col + "]");
+                                                    rBoxes[row][col].setBackground(input_focused);
+                                                    rBoxes[row][col].setTag("normal"); //once youve touched it, switch it back to normal
+                                                    rBoxes[row][col].requestFocus();
+                                                } else {
+                                                    if (rBoxes[row][col].isEnabled() && rBoxes[row][col].isFocusable() && rBoxes[row][col].getVisibility() == View.VISIBLE) {
+                                                        String tag = (String) rBoxes[row][col].getTag();
+                                                        if (tag!=null && rBoxes[row][col].getTag().equals("red")){
+                                                            System.out.println("rBoxes[" + row + "][" + col + "] IS MARKED INCORRECT SO LEAVE IT ALONE");
+                                                        }
+                                                        else {
+                                                            //System.out.println("REMOVING FOCUS for rBoxes[" + row + "][" + col + "]");
+                                                            rBoxes[row][col].setBackground(input_unfocused);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+
+                                    //we are focused on an rBox so remove focus for all answerBoxes
+                                    for (int ans_index = 0; ans_index < answerBoxes.length; ans_index++) {
+                                        if (answerBoxes[ans_index] != null) {
+                                            if (answerBoxes[ans_index].isEnabled() && answerBoxes[ans_index].isFocusable() && answerBoxes[ans_index].getVisibility() == View.VISIBLE) {
+                                                String tag = (String) answerBoxes[ans_index].getTag();
+                                                if (tag!=null && answerBoxes[ans_index].getTag().equals("red")){
+                                                    System.out.println("answerBoxes[" +ans_index+ "] IS MARKED INCORRECT SO LEAVE IT ALONE");
+                                                }
+                                                else {
+                                                    //System.out.println("REMOVING FOCUS for answerBoxes[" + ans_index + "]");
+                                                    answerBoxes[ans_index].setBackground(input_unfocused);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    //also remove focus for answerText box if it is enabled
+                                    if (answerText.isEnabled()){
+                                        answerText.setBackground(answer_unfocused);
+                                    }
+
+                                    //also remove focus for remainderBox if it is enabled
+                                    if (remainderBox.isEnabled()) {
+                                        remainderBox.setBackground(remainder_unfocused);
+                                    }
+                                }
+
+                            }
+                            return true;
+                        }
+                    });
+                }
+            }
+        }
+
+        //set up on touch listeners for answer boxes
+        for (int i_track=0; i_track<answerBoxes.length; i_track++){
+            final int i = i_track;
+            if (answerBoxes[i]!=null){
+                answerBoxes[i].setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_UP) {
+                            System.out.println("IN ONTOUCHLISTENER FOR answerBoxes[" + i + "]");
+                            if (answerBoxes[i].isEnabled() && answerBoxes[i].isFocusable()) {
+                                for (int j = 0; j < answerBoxes.length; j++) {
+                                    if (answerBoxes[j] != null) {
+                                        if (j == i) {
+                                            //System.out.println("Setting FOCUS for answerBoxes[" + j + "]");
+                                            answerBoxes[j].setBackground(input_focused);
+                                            answerBoxes[j].setTag("normal"); //once we've touched it, set it back to normal
+                                            answerBoxes[j].requestFocus();
+                                        } else {
+                                            if (answerBoxes[j].isEnabled() && answerBoxes[j].isFocusable() && answerBoxes[j].getVisibility() == View.VISIBLE) {
+                                                String tag = (String) answerBoxes[j].getTag();
+                                                if (tag!=null && answerBoxes[j].getTag().equals("red")){
+                                                    System.out.println("answerBoxes[" +j+ "] IS MARKED INCORRECT SO LEAVE IT ALONE");
+                                                }
+                                                else {
+                                                    //System.out.println("REMOVING FOCUS for answerBoxes[" + j + "]");
+                                                    answerBoxes[j].setBackground(input_unfocused);
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+
+
+                                //now remove focus for all the rBoxes
+                                for (int row = 0; row < rBoxes.length; row++) {
+                                    for (int col = 0; col < rBoxes[row].length; col++) {
+                                        if (rBoxes[row][col] != null) {
+                                            if (rBoxes[row][col].isEnabled() && rBoxes[row][col].isFocusable() && rBoxes[row][col].getVisibility() == View.VISIBLE) {
+                                                String tag = (String) rBoxes[row][col].getTag();
+                                                if (tag!=null && rBoxes[row][col].getTag().equals("red")){
+                                                    System.out.println("rBoxes[" + row + "][" + col + "] IS MARKED INCORRECT SO LEAVE IT ALONE");
+                                                }
+                                                else {
+                                                    //System.out.println("REMOVING FOCUS for rBoxes[" + row + "][" + col + "]");
+                                                    rBoxes[row][col].setBackground(input_unfocused);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                //also remove focus for answerText box if it is enabled
+                                if (answerText.isEnabled()){
+                                    answerText.setBackground(answer_unfocused);
+                                }
+
+                                //also remove focus for remainderBox if it is enabled
+                                if (remainderBox.isEnabled()) {
+                                    remainderBox.setBackground(remainder_unfocused);
+                                }
+                            }
+
+                        }
+                        return true;
+                    }
+                });
+
+            }
+        }
+
+        //set up touch listener for answerText (box on main panel for problem at hand)
+        answerText.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent event){
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (answerText.isEnabled()){
+                        System.out.println("Setting FOCUS for answerText box");
+                        answerText.setBackground(answer_focused);
+                        answerText.requestFocus();
+
+                        for (int i=0; i<answerBoxes.length; i++){
+                            if (answerBoxes[i]!=null){
+                                if (answerBoxes[i].isEnabled() && answerBoxes[i].isFocusable() && answerBoxes[i].getVisibility()==View.VISIBLE){
+                                    //System.out.println("REMOVING FOCUS for answerBoxes[" + i + "]");
+                                    answerBoxes[i].setBackground(input_unfocused);
+                                }
+                            }
+                        }
+
+                        for (int i=0; i<rBoxes.length; i++){
+                            for (int j=0; j<rBoxes[i].length; j++){
+                                if (rBoxes[i][j]!=null){
+                                    if (rBoxes[i][j].isEnabled() && rBoxes[i][j].isFocusable() && rBoxes[i][j].getVisibility() == View.VISIBLE) {
+                                        //System.out.println("REMOVING FOCUS for rBoxes[" + i + "][" + j + "]");
+                                        rBoxes[i][j].setBackground(input_unfocused);
+                                    }
+                                }
+                            }
+                        }
+
+                        //also remove focus for remainderBox if it is enabled
+                        if (remainderBox.isEnabled()) {
+                            remainderBox.setBackground(remainder_unfocused);
+                        }
+                    }
+                }
+                return true;
+            }
+        });
+
+
+        //set up touch listener for remainderBox
+        remainderBox.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent event){
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (remainderBox.isEnabled()){
+                        System.out.println("Setting FOCUS for REMAINDER box");
+                        remainderBox.setBackground(remainder_focused);
+                        remainderBox.requestFocus();
+
+                        for (int i=0; i<answerBoxes.length; i++){
+                            if (answerBoxes[i]!=null){
+                                if (answerBoxes[i].isEnabled() && answerBoxes[i].isFocusable() && answerBoxes[i].getVisibility()==View.VISIBLE){
+                                    System.out.println("REMOVING FOCUS for answerBoxes[" + i + "]");
+                                    answerBoxes[i].setBackground(input_unfocused);
+                                }
+                            }
+                        }
+
+                        for (int i=0; i<rBoxes.length; i++){
+                            for (int j=0; j<rBoxes[i].length; j++){
+                                if (rBoxes[i][j]!=null){
+                                    if (rBoxes[i][j].isEnabled() && rBoxes[i][j].isFocusable() && rBoxes[i][j].getVisibility() == View.VISIBLE) {
+                                        System.out.println("REMOVING FOCUS for rBoxes[" + i + "][" + j + "]");
+                                        rBoxes[i][j].setBackground(input_unfocused);
+                                    }
+                                }
+                            }
+                        }
+
+                        //also remove focus for answerText if it is enabled
+                        if (answerText.isEnabled()) {
+                            answerText.setBackground(answer_unfocused);
+                        }
+                    }
+                }
+                return true;
+            }
+        });
+
 
         structNumBoxes[0] = (TextView) findViewById(R.id.NumBox1);   // these are the boxes holding
         structNumBoxes[1] = (TextView) findViewById(R.id.NumBox2);   // digits of the numerator in
@@ -306,11 +552,20 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         enableButtons();
     }
 
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        EditText target = (EditText) getWindow().getCurrentFocus();
+//        System.out.println("======================================================");
+//        System.out.println("ON TOUCH EVENT, THE TARGET WITH FOCUS IS: " + getResources().getResourceEntryName(target.getId()));
+//        return super.dispatchTouchEvent(ev);
+//    }
+
     public void goToNextQuestion() {
         final Drawable normal_answer = ContextCompat.getDrawable(this, R.drawable.answer_background);
         final Drawable normal_remainder = ContextCompat.getDrawable(this, R.drawable.remainder_background);
 
         // progress to the next question and display it
+        answerText.setEnabled(true); //aditi
         answerText.setText("");         // start by clearing everything
         remainderBox.setText("");
         resultText.setText("");
@@ -343,6 +598,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         remainderBox.setBackground(normal_remainder);
         answerText.setBackground(normal_answer);    //   make sure the answer background is neutral
+        //answerText.requestFocus();
 
         // show the remainder only if the answer has one
         System.out.println("remainder for question " + Integer.toString(Integer.parseInt(nextQuestion.numerator) % Integer.parseInt(nextQuestion.denominator)));
@@ -375,8 +631,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     }
 
     public void enableButtons() {
-        System.out.println("MATHACTIVITY: IN endableButtons method!");
-        submitButton.setEnabled(true);
+        System.out.println("MATHACTIVITY: IN enableButtons method!");
+        if (!inTutorialMode)
+            submitButton.setEnabled(true); // aditi - only enable the submitButton if not doing an interactive tutorial
         nextButton.setEnabled(true);
         keyboardEnabled = true;
         return;
@@ -454,6 +711,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     // show balls and boxes to illustrate a simple division problem
     public void showEasyTutorial(int numerator, int denominator) {
         clearView();                    // clear out all previous views from help panel
+
+        inTutorialMode = true; //aditi - set tutorial mode true for easy tutorial
 
         // there are a lot of nested views here
         // the top view contains the whole illustration
@@ -552,11 +811,71 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         divisionText.setVisibility(View.VISIBLE);
         multiplicationAnswer.setVisibility(View.VISIBLE);
         divisionAnswer.setVisibility(View.VISIBLE);
+        multiplicationAnswer.setEnabled(true); // aditi
+        divisionAnswer.setEnabled(true); //aditi
+
+        final Drawable input_unfocused = ContextCompat.getDrawable(this, R.drawable.input_background);
+        final Drawable input_focused = ContextCompat.getDrawable(this, R.drawable.input_focused);
+
+        multiplicationAnswer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    System.out.println("IN EASY TUTORIAL AND IN ONTOUCH EVENT FOR MULTIPLICATION BOX");
+                    if (multiplicationAnswer.isEnabled()) {
+                        multiplicationAnswer.requestFocus();
+                        multiplicationAnswer.setBackground(input_focused);
+                        multiplicationAnswer.setTag("normal");
+                        if (divisionAnswer.isEnabled()) {
+                            String tag = (String) divisionAnswer.getTag();
+                            if (tag!=null && tag.equals("red")){
+                                System.out.println("DIVISION ANSWER WAS INCORRECT SO LEAVE IT ALONE");
+                            }
+                            else {
+                                divisionAnswer.setBackground(input_unfocused);
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        });
+
+        divisionAnswer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    System.out.println("IN EASY TUTORIAL AND IN ONTOUCH EVENT FOR DIVISION BOX");
+                    if (divisionAnswer.isEnabled()) {
+                        divisionAnswer.requestFocus();
+                        divisionAnswer.setBackground(input_focused);
+                        divisionAnswer.setTag("normal");
+                        if (multiplicationAnswer.isEnabled()) {
+                            String tag = (String) multiplicationAnswer.getTag();
+                            if (tag!=null && tag.equals("red")){
+                                System.out.println("MULTIPLICATION ANSWER WAS INCORRECT SO LEAVE IT ALONE");
+                            }
+                            else {
+                                multiplicationAnswer.setBackground(input_unfocused);
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        });
+
+
+
+        //disable answer box, submit button during easy tutorial
+        answerText.setEnabled(false);
+        submitButton.setEnabled(false);
 
         // show and implement button to check answers
         final Drawable correct_input = ContextCompat.getDrawable(this, R.drawable.input_correct);
         final Drawable incorrect_input = ContextCompat.getDrawable(this, R.drawable.input_incorrect);
         checkAnswers = (Button) findViewById(R.id.easyExampleAnswerCheck);
+        checkAnswers.setEnabled(true);
         checkAnswers.setClickable(true);
         checkAnswers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -571,8 +890,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 if (!multiplicationAnswer.getText().toString().equals("")) {
                     if (multiplicationAnswer.getText().toString().equals(Integer.toString(quotient))) {
                         multiplicationAnswer.setBackground(correct_input);
+                        multiplicationAnswer.setTag("normal");
+                        multiplicationAnswer.setEnabled(false);
                     } else {
                         multiplicationAnswer.setBackground(incorrect_input);
+                        multiplicationAnswer.setTag("red");
                         any_incorrect = true;
                     }
                 } else {
@@ -581,8 +903,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 if (!divisionAnswer.getText().toString().equals("")) {
                     if (divisionAnswer.getText().toString().equals(Integer.toString(quotient))) {
                         divisionAnswer.setBackground(correct_input);
+                        divisionAnswer.setTag("normal");
+                        divisionAnswer.setEnabled(false);
                     } else {
                         divisionAnswer.setBackground(incorrect_input);
+                        divisionAnswer.setTag("red");
                         any_incorrect = true;
                     }
                 } else {
@@ -597,6 +922,12 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     if (finished) {
                         message = "TUTORIAL-STEP-EASY;CORRECT";
                         enableButtons();
+                        checkAnswers.setEnabled(false); //aditi - disable this button when tutorial is finished
+                        multiplicationAnswer.setEnabled(false);
+                        divisionAnswer.setEnabled(false);
+                        answerText.setEnabled(true);
+                        answerText.requestFocus(); // aditi - after tutorial is done, answer should have focus
+                        inTutorialMode = false;
                     }
                     else {
                         message = "TUTORIAL-STEP-EASY;INCOMPLETE";
@@ -653,6 +984,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         for (int i = 0; i < answerBoxes.length; i++ ){
             if (answerBoxes[i] != null) {
                 answerBoxes[i].setText("");
+                answerBoxes[i].setEnabled(true); //aditi - re-enable these boxes for next question
+                //System.out.println("IN HIDESTRUCTURE: renabling answerBoxes[" + i + "]");
+                answerBoxes[i].setFocusableInTouchMode(true); //aditi
+                answerBoxes[i].setFocusable(true); //aditi
                 answerBoxes[i].setVisibility(View.INVISIBLE);
                 answerBoxes[i].setBackground(normal_input);
 
@@ -663,6 +998,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             for (int j=0; j <rBoxes[i].length; j++) {
                 if (rBoxes[i][j] != null) {
                     rBoxes[i][j].setText("");
+                    rBoxes[i][j].setEnabled(true); //aditi
+                    //System.out.println("IN HIDESTRUCTURE: renabling rBoxes[" + i+ "][" + j + "]");
+                    rBoxes[i][j].setFocusableInTouchMode(true);
+                    rBoxes[i][j].setFocusable(true); //aditi
                     rBoxes[i][j].setVisibility(View.INVISIBLE);
                     rBoxes[i][j].setBackground(normal_input);
 
@@ -715,8 +1054,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         }
 
         for (int i = 0; i < rBoxes.length ; i++) {
-            for (int j = 0; j <rBoxes.length; j++) {
-                if (rBoxes[i][j]!=null && !rBoxes[i][j].isEnabled()) {
+            for (int j = 0; j <rBoxes[i].length; j++) { //aditi - trying to debug added rBoxes[i] instead of rBoxes
+                if (rBoxes[i][j]!=null && !rBoxes[i][j].isEnabled() && (rBoxes[i][j].getVisibility()==View.VISIBLE)) { //aditi - added visibility check
                     row_to_focus = i;
                     break;
                 }
@@ -728,21 +1067,30 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         }
 
         System.out.println("enabling answer" + Integer.toString(row_to_focus));
-
-        for (int i = row_to_focus; i< row_to_focus + 3 && i<rBoxes.length; i++) {
+        for (int i = row_to_focus; i< row_to_focus + 2 && i<rBoxes.length; i++) { //aditi - changed +3 to +2
             for (int j = 0; j<rBoxes[i].length; j++) {
-                if (rBoxes[i][j]!=null && !rBoxes[i][j].isEnabled()) {
+                if (rBoxes[i][j]!=null && !rBoxes[i][j].isEnabled() && (rBoxes[i][j].getVisibility()==View.VISIBLE)) { //aditi - added visibility check
+                    System.out.println("IN FOCUSNEXTSTEPINTUTORIAL NOW ENABLING rBoxes[" + i + "][" + j + "]");
                     rBoxes[i][j].setEnabled(true);
                     rBoxes[i][j].setBackground(current_input);
                 }
             }
         }
 
+        System.out.println("IN FOCUSNEXTSTEPTUTORIAL METHOD AND ROW_TO_FOCUS IS: " + row_to_focus);
+
         if (row_to_focus == 0){
+            System.out.println("IN FOCUSNEXTSTEPINTUTORIAL METHOD BEFORE SENDING TUTORIAL-STEP;DONE message");
             checkAnswers.setClickable(false);
+            checkAnswers.setEnabled(false);
+            inTutorialMode = false; //aditi - figure out where to set end of interactive structure tutorial
             TCPClient.singleton.sendMessage("TUTORIAL-STEP;DONE");
             answerText.setEnabled(true);
+            if (remainderBox.getVisibility()==View.VISIBLE){
+                remainderBox.setEnabled(true);
+            }
             submitButton.setEnabled(true);
+
         }
     }
 
@@ -927,6 +1275,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             // if this is a tutorial, we must do a few more things
             exampleStep = 1;
             System.out.println("starting tutorial");
+            inTutorialMode = true; //aditi - setting tutorial mode flag
             resetRBoxAnswers();
             // extract answers for all of the boxes to be able to check them later
             final String[] answerList = answers.split(":");
@@ -984,8 +1333,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             final Drawable correct_input = ContextCompat.getDrawable(this, R.drawable.input_correct);
             final Drawable incorrect_input = ContextCompat.getDrawable(this, R.drawable.input_incorrect);
 
+            submitButton.setEnabled(false); //aditi - if theyre doing an interactive tutorial, they shouldn't be doing the problem
+            answerText.setEnabled(false); //aditi - during the tutorial they shouldn't enter answers for the main problem
+            if (remainderBox.getVisibility()==View.VISIBLE){
+                remainderBox.setEnabled(false);
+            }
             checkAnswers = (Button) findViewById(R.id.hardExampleAnswerCheck);
             checkAnswers.setVisibility(View.VISIBLE);
+            checkAnswers.setEnabled(true); //aditi - button should be enabled during tutorial
             checkAnswers.setClickable(true);
             checkAnswers.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1005,8 +1360,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                                     if (answerBoxes[i].getText().toString().equals(rBoxAnswers[0][i+1]) ||
                                             (rBoxAnswers[0][i+1].equals("") && answerBoxes[i].getText().toString().equals("0"))) {
                                         answerBoxes[i].setBackground(correct_input);
+                                        answerBoxes[i].setTag("normal");
+                                        answerBoxes[i].setFocusable(false); //aditi - we dont want student to edit previously correct answers
                                     } else {
                                         answerBoxes[i].setBackground(incorrect_input);
+                                        answerBoxes[i].setTag("red");
                                         any_incorrect = true;
                                         System.out.println("answer incorrect at "  + Integer.toString(i) + "should be " + rBoxAnswers[0][i+1] + " is " + answerBoxes[i]);
 
@@ -1027,8 +1385,12 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                                         if (rBoxes[i][j].getText().toString().equals(rBoxAnswers[i][j]) ||
                                                 (rBoxAnswers[i][j].equals("") && rBoxes[i][j].getText().toString().equals("0"))) {
                                             rBoxes[i][j].setBackground(correct_input);
+                                            rBoxes[i][j].setTag("normal");
+                                            rBoxes[i][j].setFocusable(false); //aditi - we dont want students to edit previously correct answers
+                                            System.out.println("IN CHECK ANSWERS BUTTON: setting focusable=false for rBoxes["+i+"]["+j+"]");
                                         } else {
                                             rBoxes[i][j].setBackground(incorrect_input);
+                                            rBoxes[i][j].setTag("red");
                                             any_incorrect = true;
 
                                         }
@@ -1042,16 +1404,20 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     String message;
                     if (finished) {
                         if (any_incorrect) {
-                             message = "TUTORIAL-STEP;INCORRECT";
+                            message = "TUTORIAL-STEP;INCORRECT";
+                            TCPClient.singleton.sendMessage(message);
                         } else {
                             message = "TUTORIAL-STEP;CORRECT";
+                            TCPClient.singleton.sendMessage(message);
                             focusNextStepInTutorial();
                         }
                     } else {
-                         message = "TUTORIAL-STEP;INCOMPLETE";
+                        message = "TUTORIAL-STEP;INCOMPLETE";
+                        TCPClient.singleton.sendMessage(message);
                     }
 
-                    TCPClient.singleton.sendMessage(message);
+
+                    //TCPClient.singleton.sendMessage(message); //moved this line up after creating each msg (want to send it before focusNextStepInTutorial
                 }
             });
         } else {
@@ -1071,7 +1437,15 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             for (int i = 0; i<answerBoxes.length; i++) {
                 if (answerBoxes[i] != null) {
                     answerBoxes[i].setBackground(normal_input);
-                    answerBoxes[i].setEnabled(true);
+                    System.out.println("SHOULD BE IN STRUCTURE HINT DEALING WITH ANSWERBOXES[" +i+ "]");
+                    if (answerBoxes[i].getText().toString().equals("R")) { // aditi - adding to make sure R box isn't editable
+                        System.out.println("DISABLING ANSWERBOXES[" + i+ "] because it has an R in it");
+                        answerBoxes[i].setEnabled(false);
+                    }
+                    else {
+                        answerBoxes[i].setEnabled(true);
+                    }
+
                 }
             }
         }
@@ -1094,6 +1468,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         }
 
         current_step_box.setText(parsed[1]);
+        current_step_box.setEnabled(false);
     }
 
     public void fillInBoxes() {
@@ -1101,10 +1476,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         // this is used in tutorials to fill in the current step -- otherwise it will fill in the whole
         // structure
 
+        final Drawable correct_input = ContextCompat.getDrawable(this, R.drawable.input_correct);
+
         for (int i = 0; i<answerBoxes.length; i++) {
             if (answerBoxes[i] != null) {
                 if (answerBoxes[i].isFocusable() && answerBoxes[i].getVisibility()==View.VISIBLE && answerBoxes[i].isEnabled()) {
                     answerBoxes[i].setText(rBoxAnswers[0][i+1]);
+                    //answerBoxes[i].setEnabled(false); // added by aditi
+                    //answerBoxes[i].setFocusable(false); // added by aditi
                 } else {
                     System.out.println(Integer.toString(i) + " was not focusable, visible or enabled");
 
@@ -1116,11 +1495,16 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 if (rBoxes[i][j] != null) {
                     if (rBoxes[i][j].isFocusable() && rBoxes[i][j].getVisibility()==View.VISIBLE && rBoxes[i][j].isEnabled()) {
                         rBoxes[i][j].setText(rBoxAnswers[i][j]);
+                        //rBoxes[i][j].setEnabled(false); // added by aditi
+                        //rBoxes[i][j].setFocusable(false); // added by aditi
                     } else {
                         System.out.println(Integer.toString(i)+ Integer.toString(j) + " was not focusable, visible or enabled");
                     }
                 }
             }
+        }
+        if (inTutorialMode){
+            checkAnswers.performClick();
         }
 
     }
@@ -1129,6 +1513,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         // parse the message text to find which box and what answer
         String[] boxSpecs = message_text.split(":");    // each boxSpec is one box
+
+        final Drawable normal_input = ContextCompat.getDrawable(this, R.drawable.input_background);
 
         for (int i = 0; i < boxSpecs.length; i++) {
             String[] boxData = boxSpecs[i].split("-");
@@ -1139,11 +1525,19 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 String val = boxData[2];
 
                 if (row == 0) {                         // row == 0 means its an answer row box
+                    answerBoxes[col-1].setBackground(normal_input); //aditi
                     answerBoxes[col-1].setText(val);
+                    answerBoxes[col-1].setEnabled(false); //aditi
+                    System.out.println("IN FILLINBOXES disabling answerBoxes[" + Integer.toString(col-1) + "]");
+                    //answerBoxes[col-1].setFocusable(false); //aditi
                 }
 
                 else if (rBoxes[row][col] != null) {
+                    rBoxes[row][col].setBackground(normal_input); //aditi
                     rBoxes[row][col].setText(val);
+                    rBoxes[row][col].setEnabled(false); //aditi
+                    System.out.println("IN FILLBOXES disabling rBoxes[" + row + "][" + col + "]");
+                    //rBoxes[row][col].setFocusable(false); //aditi
                 }
             }
         }
@@ -1166,12 +1560,20 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 String[] separatedMessage = message.split(";");
                 if (separatedMessage[0].equals(MathControl.QUESTIONMESSAGE)     // set the next question to the specified question
                         && separatedMessage.length == 3) {
-                    nextQuestion = mathContol.getQuestion(separatedMessage[1],separatedMessage[2]);
+                    System.out.println("IN QUESTIONACTIVITY, IN MESSAGE RECEIVED, we received QUESTION message and message split length is 3");
+                    nextQuestion = mathControl.getQuestion(separatedMessage[1],separatedMessage[2]);
                     nextAction = MathControl.SHOWQUESTION;
+                    answerText.setEnabled(false); //aditi
+                    if (remainderBox.getVisibility()==View.VISIBLE){ //aditi - also disable remainder box if its visible
+                        remainderBox.setEnabled(false);
+                    }
+                    if (!resultText.getText().equals("That is correct."))
+                        resultText.setText(resultText.getText() + " The correct answer is " + currentQuestion.answerText + "."); //aditi
                     submitButton.setVisibility(View.INVISIBLE);
                     final Drawable nextButtonBackground = ContextCompat.getDrawable(this, R.color.focused_answer);
                     nextButton.setVisibility(View.VISIBLE);
                     nextButton.setBackground(nextButtonBackground);
+                    nextButton.setEnabled(true); //aditi
                 }
                 else if (separatedMessage[0].equals(MathControl.STARTTICTACTOE)) {  // start a game of tictactoe
                     startTicTacToe();
@@ -1200,6 +1602,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         if (separatedMessage.length > 1) {
                             fillInBoxes(separatedMessage[1]);
                         } else {
+                            System.out.println("IN MATHACTIVITY, about to call fillInBoxes() with NO ARGS");
                             fillInBoxes();
                         }
                     }
@@ -1288,7 +1691,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             TCPClient.singleton.setSessionOwner(this);
 
         if (data.hasExtra("nextLevel") && data.hasExtra("nextNumber")) {
-            nextQuestion = mathContol.getQuestion(data.getExtras().getInt("nextLevel"), data.getExtras().getInt("nextNumber"));
+            nextQuestion = mathControl.getQuestion(data.getExtras().getInt("nextLevel"), data.getExtras().getInt("nextNumber"));
             goToNextQuestion();
         }
 

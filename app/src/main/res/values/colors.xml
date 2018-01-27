@@ -30,7 +30,10 @@
     <color name="focused_answer">#f4f7fa</color>
     <color name="input_disabled">#a3acb3</color>
     <color name="focused_text">#dcedff</color>
+    <color name="input_focus_border">#FFFF99</color>
     <color name="pressed_text">#297fb1</color>
+
+
     <color name="visual_focus_background">#ff4b4b4b</color>
     <color name="other_background">#ff34a89d</color>
 </resources>

@@ -26,6 +26,7 @@ public class MathControl {
     public static int TICTACTOEREQUEST = 1;
     public static int EXAMPLEREQUEST = 1;
     public static int MAX_NUM_DIGITS = 6;
+    public static int NUM_DIGITS_FOR_STRUCTURE = 1;
 
     private Questions questions;
     private Questions level1_questions;
