@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -38,10 +39,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private EditText sessionNumberBox;
     private TextView connectionStatus;
 //    private EditText startQuestionNum;
-     private EditText conditionNum;
+    private EditText conditionNum;
 //    private EditText maxTime;
-     private String sessionNum;
-     private int expGroup;
+    private String sessionNum;
+    private int expGroup;
+    private int difficultyGroup;
 //    private EditText fixedBreakInterval;
 //    private EditText breaksGiven;
 
@@ -54,7 +56,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.start_screen);
 
         iPandPort = (EditText) findViewById(R.id.IPandPort);
-        iPandPort.setText("172.27.211.109:9090");
+        iPandPort.setText("172.27.214.83:9090");
         connectButton = (Button) findViewById(R.id.ConnectButton);
         connectionStatus = (TextView) findViewById(R.id.ConnectionStatus);
         startMathButton = (Button)findViewById(R.id.startMathButton);
@@ -93,13 +95,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (TCPClient.singleton != null) {
             String startMessage = "";
 
-            startMessage = "START;" + pid + ";" + sessionNum + ";" + expGroup;
+            startMessage = "START;" + pid + ";" + sessionNum + ";" + expGroup + ";" + difficultyGroup;
 
             mTcpClient.sendMessage(startMessage);
         }
 
-        intent.putExtra("QuestionLevel", 1);
-        intent.putExtra("QuestionNumber", 1);
+        intent.putExtra("SessionNum", Integer.parseInt(sessionNum));
+        intent.putExtra("DifficultyGroup", difficultyGroup);
+        if (difficultyGroup == 1) { //harder questions
+            intent.putExtra("QuestionLevel", 3);
+            intent.putExtra("QuestionNumber", 0);
+        }
+        else {
+            intent.putExtra("QuestionLevel", 1);
+            intent.putExtra("QuestionNumber", 0);
+        }
 
         startActivity(intent);
     }
@@ -115,6 +125,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
             expGroup = 1;
         }
         startMathQuestions(v);
+    }
+
+    public void onRadioButtonClicked(View view){
+        boolean checked = ((RadioButton) view).isChecked();
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.easierRB:
+                if (checked)
+                    difficultyGroup = 0;
+                break;
+            case R.id.harderRB:
+                if (checked)
+                    difficultyGroup = 1;
+                break;
+        }
     }
 
     public void connectTablet(View view){

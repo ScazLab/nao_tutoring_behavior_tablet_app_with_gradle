@@ -66,6 +66,34 @@
         android:text="Enter Session Number (default 1)"
         android:layout_marginBottom="30dp" />
 
+    <RadioGroup
+        android:layout_width="562dp"
+        android:layout_height="128dp"
+        android:layout_row="4"
+        android:layout_column="1"
+        android:orientation="horizontal"
+        android:id="@+id/DifficultyRG">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Easier Questions"
+            android:id="@+id/easierRB"
+            android:layout_row="4"
+            android:layout_column="1"
+            android:checked="false"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Harder Questions"
+            android:id="@+id/harderRB"
+            android:checked="false"
+            android:onClick="onRadioButtonClicked"/>
+
+    </RadioGroup>
+
 
     <Button
         android:layout_width="match_parent"

@@ -33,6 +33,11 @@
             android:label="@string/title_activity_tic_tac_toe"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Completed"
+            android:label="@string/title_activity_completed"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

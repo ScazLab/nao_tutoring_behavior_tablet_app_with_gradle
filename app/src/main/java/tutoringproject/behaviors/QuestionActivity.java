@@ -33,11 +33,14 @@ import android.inputmethodservice.KeyboardView;
 import org.w3c.dom.Text;
 
 import java.nio.channels.OverlappingFileLockException;
+import java.util.concurrent.TimeUnit;
 
 
 public class QuestionActivity extends AppCompatActivity implements TCPClientOwner {
 
     int expGroup = 1; // TODO change
+    int difficultyGroup = 0;
+    int sessionNum = 1;
 
     MathControl mathControl;
     TextView numerator;
@@ -66,6 +69,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     int exampleStep = 0;
     boolean keyboardEnabled = true;
     boolean inTutorialMode = false;
+    boolean inWorkedExample = false;
+
+    private TimeWatch timeWatch; //timeWatch for calculating time on each individual attempt
+    private long trackQuestionTime = 0;
+
+    // ends session at max_session_time seconds
+    private int max_session_time = 300; //5 minutes for testing //this should be 15 minutes for adaptive help study (900 seconds)
+    private TimeWatch total_elapsed_timewatch;
 
 
     private KeyboardView mKeyboardView;
@@ -84,8 +95,15 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         denominator = (TextView) findViewById(R.id.Denominator);
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+        sessionNum = extras.getInt("SessionNum");
+        difficultyGroup = extras.getInt("DifficultyGroup");
         int level = extras.getInt("QuestionLevel");
-        final int number = extras.getInt("QuestionNumber");
+        int number = extras.getInt("QuestionNumber");
+
+        if (sessionNum>1){
+            //use data file to figure out what index to start pulling questions
+            number = 3; //for now just test with number other than 0
+        }
 
         // these are the possible backgrounds for the answer box
         final Drawable correct_border = ContextCompat.getDrawable(this, R.drawable.answer_correct);
@@ -172,6 +190,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
             }
         });
+
+        total_elapsed_timewatch = TimeWatch.start(); //aditi - start total session timer
+        timeWatch = TimeWatch.start();
+        trackQuestionTime = 0;
 
         // get the first question and display it
         mathControl = new MathControl(this);
@@ -483,7 +505,6 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 // parse the input given as an answer
                 if (answerText.getText().length() > 0) {
                     int answer = Integer.parseInt(answerText.getText().toString());
@@ -492,13 +513,19 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         remainder_answer = Integer.parseInt(remainderBox.getText().toString());
                     }
 
+                    //store elapsed questionTime
+                    //long questionTime = timeWatch.time(TimeUnit.SECONDS);  //stores elapsed time in milliseconds
+                    //System.out.println("QuestionTime: " + Long.toString(questionTime) +"");
+                    trackQuestionTime += timeWatch.time(TimeUnit.SECONDS);
+
                     if (answer == Integer.parseInt(currentQuestion.numerator) / Integer.parseInt(currentQuestion.denominator)) {
                         int remainder = Integer.parseInt(currentQuestion.numerator) % Integer.parseInt(currentQuestion.denominator);
                         // if both the answer and remainder are correct (0 if there is no remainder) indicate that.
                         // show the next question button, and send a message to the server
                         // also change the border of the answer to green to indicate it is correct
                         if (remainder == 0 || remainder == remainder_answer) {
-                            String message = "CA;" + answer + ";";
+                            System.out.println("QuestionTime: " + Long.toString(trackQuestionTime) +"");
+                            String message = "CA;" + answer + ";" + trackQuestionTime + ";";
 
                             TCPClient.singleton.sendMessage(message);
                             answerText.setBackground(correct_border);
@@ -512,7 +539,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         } else {
                             // if the remainder is not correct, only change that border, but
                             // still send a message indicating an incorrect answer
-                            String message = "IA;" + answer + ";";
+                            System.out.println("QuestionTime: " + Long.toString(trackQuestionTime) +"");
+                            String message = "IA;" + answer + ";" + trackQuestionTime + ";";
                             TCPClient.singleton.sendMessage(message);
                             resultText.setText(remainderBox.getText() + " is incorrect remainder.");
                             answerText.setBackground(correct_border);
@@ -524,7 +552,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     } else {
                         // if the answer is incorrect, indicate so in colors and send a message to
                         // the server saying so
-                        String message = "IA;" + answer + ";";
+                        System.out.println("QuestionTime: " + Long.toString(trackQuestionTime) +"");
+                        String message = "IA;" + answer + ";" + trackQuestionTime + ";";
                         TCPClient.singleton.sendMessage(message);
                         resultText.setText(answerText.getText() + " is incorrect.");
                         answerText.setBackground(incorrect_border);
@@ -538,6 +567,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                                             // talking so the user cannot progress to the
                                             // next question before we know what it is or if a
                                             // tutoring behavior should be given first
+
+                    timeWatch.reset(); //reset the attempt timer after attempt is submitted
+                    trackQuestionTime = 0;
                 }
             }
         });
@@ -572,6 +604,24 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         resultText.setVisibility(View.INVISIBLE);
         nextButton.setVisibility(View.INVISIBLE);
         submitButton.setVisibility(View.VISIBLE);
+
+        //FIRST CHECK IF TOTAL TIME FOR SESSION IS UP
+        if (total_elapsed_timewatch.time(TimeUnit.SECONDS) > max_session_time) {
+            System.out.println("ABOUT TO LAUNCH COMPLETED SCREEN BECAUSE SESSION TIME IS UP");
+            Intent intent = new Intent(this, Completed.class);
+
+            if (TCPClient.singleton != null) {
+                TCPClient.singleton.sendMessage("END;" + Integer.toString(nextQuestion.questionID));
+                TCPClient.singleton.stopClient();
+            }
+
+            startActivity(intent);
+            return;
+        }
+
+        //start timer for this individual attempt
+        timeWatch = TimeWatch.start();
+        trackQuestionTime = 0;
 
         // if the next question has text for being a word question, display that instead
         // of the math notation
@@ -713,6 +763,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         clearView();                    // clear out all previous views from help panel
 
         inTutorialMode = true; //aditi - set tutorial mode true for easy tutorial
+        trackQuestionTime += timeWatch.time(TimeUnit.SECONDS);
+        timeWatch.reset();
 
         // there are a lot of nested views here
         // the top view contains the whole illustration
@@ -927,6 +979,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         divisionAnswer.setEnabled(false);
                         answerText.setEnabled(true);
                         answerText.requestFocus(); // aditi - after tutorial is done, answer should have focus
+                        timeWatch.reset(); //reset since student will go back to working on attempt
                         inTutorialMode = false;
                     }
                     else {
@@ -1070,17 +1123,17 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         for (int i = row_to_focus; i< row_to_focus + 2 && i<rBoxes.length; i++) { //aditi - changed +3 to +2
             for (int j = 0; j<rBoxes[i].length; j++) {
                 if (rBoxes[i][j]!=null && !rBoxes[i][j].isEnabled() && (rBoxes[i][j].getVisibility()==View.VISIBLE)) { //aditi - added visibility check
-                    System.out.println("IN FOCUSNEXTSTEPINTUTORIAL NOW ENABLING rBoxes[" + i + "][" + j + "]");
+                    //System.out.println("IN FOCUSNEXTSTEPINTUTORIAL NOW ENABLING rBoxes[" + i + "][" + j + "]");
                     rBoxes[i][j].setEnabled(true);
                     rBoxes[i][j].setBackground(current_input);
                 }
             }
         }
 
-        System.out.println("IN FOCUSNEXTSTEPTUTORIAL METHOD AND ROW_TO_FOCUS IS: " + row_to_focus);
+        //System.out.println("IN FOCUSNEXTSTEPTUTORIAL METHOD AND ROW_TO_FOCUS IS: " + row_to_focus);
 
         if (row_to_focus == 0){
-            System.out.println("IN FOCUSNEXTSTEPINTUTORIAL METHOD BEFORE SENDING TUTORIAL-STEP;DONE message");
+            //System.out.println("IN FOCUSNEXTSTEPINTUTORIAL METHOD BEFORE SENDING TUTORIAL-STEP;DONE message");
             checkAnswers.setClickable(false);
             checkAnswers.setEnabled(false);
             inTutorialMode = false; //aditi - figure out where to set end of interactive structure tutorial
@@ -1089,6 +1142,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             if (remainderBox.getVisibility()==View.VISIBLE){
                 remainderBox.setEnabled(true);
             }
+            timeWatch.reset(); // reset because now student goes back to working on problem
             submitButton.setEnabled(true);
 
         }
@@ -1276,6 +1330,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             exampleStep = 1;
             System.out.println("starting tutorial");
             inTutorialMode = true; //aditi - setting tutorial mode flag
+            trackQuestionTime += timeWatch.time(TimeUnit.SECONDS);
+            timeWatch.reset();
             resetRBoxAnswers();
             // extract answers for all of the boxes to be able to check them later
             final String[] answerList = answers.split(":");
@@ -1551,6 +1607,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         }
         else {
             if (message.equals("SPEAKING-END")) {           // if robot is not speaking, buttons can be enabled
+                if (inWorkedExample){
+                    timeWatch.reset();
+                    inWorkedExample = false;
+                }
                 enableButtons();
             }
             else if(message.equals("SPEAKING-START")) {     // disable buttons when robot speaking
@@ -1600,7 +1660,13 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         fillInEasy(separatedMessage[2]);
                     } else {
                         if (separatedMessage.length > 1) {
-                            fillInBoxes(separatedMessage[1]);
+                            if (!inWorkedExample) {
+                                trackQuestionTime += timeWatch.time(TimeUnit.SECONDS);
+                                timeWatch.reset();
+                                inWorkedExample = true;
+                            }
+                            fillInBoxes(separatedMessage[1]); //this is where we are filling in boxes for a WORKED EXAMPLE
+
                         } else {
                             System.out.println("IN MATHACTIVITY, about to call fillInBoxes() with NO ARGS");
                             fillInBoxes();

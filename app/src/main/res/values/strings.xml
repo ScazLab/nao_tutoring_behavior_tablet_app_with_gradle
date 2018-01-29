@@ -4,6 +4,7 @@
     <string name="title_activity_break">BreakActivity</string>
     <string name="title_activity_math_control">MathControl</string>
     <string name="title_activity_tic_tac_toe">TicTacToeActivity</string>
+    <string name="title_activity_completed">Completed</string>
 
     <string name="tic_tac_toe">Tic-Tac-Toe</string>
     <string name="return_to_tutoring_session">Return to tutoring session</string>
