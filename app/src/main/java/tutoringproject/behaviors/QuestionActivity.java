@@ -516,7 +516,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     //store elapsed questionTime
                     //long questionTime = timeWatch.time(TimeUnit.SECONDS);  //stores elapsed time in milliseconds
                     //System.out.println("QuestionTime: " + Long.toString(questionTime) +"");
-                    trackQuestionTime += timeWatch.time(TimeUnit.SECONDS);
+                    trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
 
                     if (answer == Integer.parseInt(currentQuestion.numerator) / Integer.parseInt(currentQuestion.denominator)) {
                         int remainder = Integer.parseInt(currentQuestion.numerator) % Integer.parseInt(currentQuestion.denominator);
@@ -625,13 +625,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         // if the next question has text for being a word question, display that instead
         // of the math notation
-        if (nextQuestion.wordProblem != null && !nextQuestion.wordProblem.equals("")) {
+        //if (nextQuestion.wordProblem != null && !nextQuestion.wordProblem.equals("")) {
+        if (nextQuestion.wordProblem){ //if the wordProblem boolean is true
             numerator.setVisibility(View.INVISIBLE);
             denominator.setVisibility(View.INVISIBLE);
             ImageView division_bar = (ImageView) findViewById(R.id.divisionBar);
             division_bar.setVisibility(View.INVISIBLE);
             wordProblem.setVisibility(View.VISIBLE);
-            wordProblem.setText(nextQuestion.wordProblem);
+            wordProblem.setText(nextQuestion.spokenQuestion); //for a word problem, use spokenQuestion as written text
         } else {
             // otherwise, set the numerator and denominator to show the new numbers
             numerator.setVisibility(View.VISIBLE);
@@ -763,7 +764,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         clearView();                    // clear out all previous views from help panel
 
         inTutorialMode = true; //aditi - set tutorial mode true for easy tutorial
-        trackQuestionTime += timeWatch.time(TimeUnit.SECONDS);
+        trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
         timeWatch.reset();
 
         // there are a lot of nested views here
@@ -1330,7 +1331,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             exampleStep = 1;
             System.out.println("starting tutorial");
             inTutorialMode = true; //aditi - setting tutorial mode flag
-            trackQuestionTime += timeWatch.time(TimeUnit.SECONDS);
+            trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
             timeWatch.reset();
             resetRBoxAnswers();
             // extract answers for all of the boxes to be able to check them later
@@ -1661,7 +1662,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     } else {
                         if (separatedMessage.length > 1) {
                             if (!inWorkedExample) {
-                                trackQuestionTime += timeWatch.time(TimeUnit.SECONDS);
+                                trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
                                 timeWatch.reset();
                                 inWorkedExample = true;
                             }

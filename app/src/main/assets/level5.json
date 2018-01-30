@@ -5,7 +5,7 @@
         "Numerator" : "245",
 		"Answer" : "22 R 3",
         "Spoken Question" : "What is 245 divided by 11?",
-        "WordProblem" : "",
+        "WordProblem" : false,
         "Spoken Answer" : "The correct answer is twenty two remainder three.",
         "Difficulty Level" : 5,
         "Max Time" : 60
@@ -17,7 +17,7 @@
         "Numerator" : "114",
 		"Answer" : "6",
         "Spoken Question" : "What is 114 divided by 19?",
-        "WordProblem" : "",
+        "WordProblem" : false,
         "Spoken Answer" : "The correct answer is six.",
         "Difficulty Level" : 5,
         "Max Time" : 60
@@ -29,7 +29,7 @@
         "Numerator" : "352",
 		"Answer" : "23 R 7",
         "Spoken Question" : "What is 352 divided by 15?",
-        "WordProblem" : "",
+        "WordProblem" : false,
         "Spoken Answer" : "The correct answer is twenty three remainder seven.",
         "Difficulty Level" : 5,
         "Max Time" : 60
@@ -41,7 +41,7 @@
         "Numerator" : "300",
 		"Answer" : "14 R 6",
         "Spoken Question" : "What is 300 divided by 21?",
-        "WordProblem" : "",
+        "WordProblem" : false,
         "Spoken Answer" : "The correct answer is fourteen remainder six.",
         "Difficulty Level" : 5,
         "Max Time" : 60
@@ -53,7 +53,7 @@
         "Numerator" : "476",
 		"Answer" : "34",
         "Spoken Question" : "What is 476 divided by 14",
-        "WordProblem" : "",
+        "WordProblem" : false,
         "Spoken Answer" : "The correct answer is thirty four.",
         "Difficulty Level" : 5,
         "Max Time" : 60
@@ -65,7 +65,7 @@
         "Numerator" : "820",
 		"Answer" : "16 R 4",
         "Spoken Question" : "What is 820 divided by 51?",
-        "WordProblem" : "",
+        "WordProblem" : false,
         "Spoken Answer" : "The correct answer is sixteen remainder four.",
         "Difficulty Level" : 5,
         "Max Time" : 60

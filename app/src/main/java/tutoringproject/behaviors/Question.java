@@ -12,7 +12,7 @@ public class Question {
     public String  numerator;
     public String answerText;
     public String spokenQuestion;
-    public String wordProblem;
+    public boolean wordProblem;
 
     public Question (JSONObject question){
         try {
@@ -22,7 +22,7 @@ public class Question {
             numerator = question.getString(Questions.KEY_NUMERATOR);
             answerText = question.getString(Questions.KEY_ANSWER);
             spokenQuestion = question.getString(Questions.KEY_SPOKEN_QUESTION);
-            wordProblem = question.getString(Questions.KEY_WORD_PROBLEM); // this string is empty unless the problem is a word problem
+            wordProblem = question.getBoolean(Questions.KEY_WORD_PROBLEM); // this string is empty unless the problem is a word problem
 
         }catch (Exception e){
             e.printStackTrace();
