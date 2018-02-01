@@ -97,13 +97,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         Bundle extras = intent.getExtras();
         sessionNum = extras.getInt("SessionNum");
         difficultyGroup = extras.getInt("DifficultyGroup");
+        expGroup = extras.getInt("ExpGroup");
         int level = extras.getInt("QuestionLevel");
         int number = extras.getInt("QuestionNumber");
 
-        if (sessionNum>1){
+        //if (sessionNum>1){
             //use data file to figure out what index to start pulling questions
-            number = 3; //for now just test with number other than 0
-        }
+        //    number = 3; //for now just test with number other than 0
+        //}
 
         // these are the possible backgrounds for the answer box
         final Drawable correct_border = ContextCompat.getDrawable(this, R.drawable.answer_correct);
@@ -142,7 +143,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     //Here check the primaryCode to see which key is pressed
                     //based on the android:codes property
                     EditText target = (EditText) getWindow().getCurrentFocus();
-                    System.out.println("In KEYBOARD ONKEY METHOD, target is: " + getResources().getResourceEntryName(target.getId()));
+                    //System.out.println("In KEYBOARD ONKEY METHOD, target is: " + getResources().getResourceEntryName(target.getId()));
 
                     int num_digits = MathControl.MAX_NUM_DIGITS;
                     if (!answerText.hasFocus())     num_digits = MathControl.NUM_DIGITS_FOR_STRUCTURE;
@@ -197,14 +198,16 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         // get the first question and display it
         mathControl = new MathControl(this);
-        if (currentQuestion == null)
-            currentQuestion = mathControl.getQuestion(level, number);
+        //if (currentQuestion == null)
+        //    currentQuestion = mathControl.getQuestion(level, number);
 
-        numerator.setText(currentQuestion.numerator.replace("", "   ").trim());
-        denominator.setText(currentQuestion.denominator);
-        String firstQuestionSpoken = currentQuestion.spokenQuestion;
+        //numerator.setText(currentQuestion.numerator.replace("", "   ").trim());
+        //denominator.setText(currentQuestion.denominator);
+        //String firstQuestionSpoken = currentQuestion.spokenQuestion;
 
-        TCPClient.singleton.sendMessage("SHOWING-QUESTION;"+firstQuestionSpoken);
+        //aditi - commenting this out below. we don't want the first question displaying immediately
+        //        we want to receive it from the ros side to know what q to start on
+        //TCPClient.singleton.sendMessage("SHOWING-QUESTION;"+firstQuestionSpoken);
 
         // these are views in the main question pane
         submitButton = (Button) findViewById(R.id.submitButton);
@@ -214,6 +217,17 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         remainderBox = (NoImeEditText) findViewById(R.id.Remainder); // this and the R appear only if there
         remainderR = (TextView) findViewById(R.id.R);           // is a remainder
         wordProblem = (TextView) findViewById(R.id.WordQuestion);
+
+        //set stuff to be invisible before first problem shows up
+        submitButton.setVisibility(View.INVISIBLE);
+        nextButton.setVisibility(View.INVISIBLE);
+        answerText.setVisibility(View.INVISIBLE);
+        resultText.setVisibility(View.INVISIBLE);
+        ImageView division_bar = (ImageView) findViewById(R.id.divisionBar);
+        division_bar.setVisibility(View.INVISIBLE);
+        numerator.setVisibility(View.INVISIBLE);
+        denominator.setVisibility(View.INVISIBLE);
+        wordProblem.setVisibility(View.INVISIBLE);
 
         for (int i = 0; i < 7; i++){
             for (int j=0; j< 4 ; j++) {
@@ -1494,9 +1508,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             for (int i = 0; i<answerBoxes.length; i++) {
                 if (answerBoxes[i] != null) {
                     answerBoxes[i].setBackground(normal_input);
-                    System.out.println("SHOULD BE IN STRUCTURE HINT DEALING WITH ANSWERBOXES[" +i+ "]");
+                    //System.out.println("SHOULD BE IN STRUCTURE HINT DEALING WITH ANSWERBOXES[" +i+ "]");
                     if (answerBoxes[i].getText().toString().equals("R")) { // aditi - adding to make sure R box isn't editable
-                        System.out.println("DISABLING ANSWERBOXES[" + i+ "] because it has an R in it");
+                        //System.out.println("DISABLING ANSWERBOXES[" + i+ "] because it has an R in it");
                         answerBoxes[i].setEnabled(false);
                     }
                     else {
@@ -1585,7 +1599,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     answerBoxes[col-1].setBackground(normal_input); //aditi
                     answerBoxes[col-1].setText(val);
                     answerBoxes[col-1].setEnabled(false); //aditi
-                    System.out.println("IN FILLINBOXES disabling answerBoxes[" + Integer.toString(col-1) + "]");
+                    //System.out.println("IN FILLINBOXES disabling answerBoxes[" + Integer.toString(col-1) + "]");
                     //answerBoxes[col-1].setFocusable(false); //aditi
                 }
 
@@ -1593,7 +1607,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     rBoxes[row][col].setBackground(normal_input); //aditi
                     rBoxes[row][col].setText(val);
                     rBoxes[row][col].setEnabled(false); //aditi
-                    System.out.println("IN FILLBOXES disabling rBoxes[" + row + "][" + col + "]");
+                    //System.out.println("IN FILLBOXES disabling rBoxes[" + row + "][" + col + "]");
                     //rBoxes[row][col].setFocusable(false); //aditi
                 }
             }
@@ -1623,6 +1637,18 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         && separatedMessage.length == 3) {
                     System.out.println("IN QUESTIONACTIVITY, IN MESSAGE RECEIVED, we received QUESTION message and message split length is 3");
                     nextQuestion = mathControl.getQuestion(separatedMessage[1],separatedMessage[2]);
+                    if (nextQuestion==null){ //should only be null when student completes all questions (shouldnt really be happening!)
+                        System.out.println("ABOUT TO LAUNCH COMPLETED SCREEN BECAUSE STUDENT FINISHED ALL QUESTIONS");
+                        Intent intent = new Intent(this, Completed.class);
+
+                        if (TCPClient.singleton != null) {
+                            TCPClient.singleton.sendMessage("END;");
+                            TCPClient.singleton.stopClient();
+                        }
+
+                        startActivity(intent);
+                        return;
+                    }
                     nextAction = MathControl.SHOWQUESTION;
                     answerText.setEnabled(false); //aditi
                     if (remainderBox.getVisibility()==View.VISIBLE){ //aditi - also disable remainder box if its visible
@@ -1635,6 +1661,13 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     nextButton.setVisibility(View.VISIBLE);
                     nextButton.setBackground(nextButtonBackground);
                     nextButton.setEnabled(true); //aditi
+                }
+                else if (separatedMessage[0].equals(MathControl.FIRSTQUESTION)) { //make extra case just for FIRST QUESTION to be shown
+                    System.out.println("IN QUESTIONACTIVITY, IN MESSAGE RECEIVED, we received FIRSTQUESTION message");
+                    answerText.setVisibility(View.VISIBLE);
+                    nextQuestion = mathControl.getQuestion(separatedMessage[1],separatedMessage[2]);
+                    nextAction = MathControl.SHOWQUESTION; // aditi - not sure if we need this
+                    goToNextQuestion();
                 }
                 else if (separatedMessage[0].equals(MathControl.STARTTICTACTOE)) {  // start a game of tictactoe
                     startTicTacToe();

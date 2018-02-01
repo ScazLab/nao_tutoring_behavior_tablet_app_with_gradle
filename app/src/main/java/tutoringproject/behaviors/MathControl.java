@@ -13,6 +13,7 @@ import java.io.InputStream;
 public class MathControl {
 
     public static String QUESTIONMESSAGE = "QUESTION";
+    public static String FIRSTQUESTION = "QUESTIONFIRST";
     public static String STARTTICTACTOE = "TICTACTOE";
     public static String SHOWTEXTHINT = "SHOWTEXTHINT";
     public static String SHOWEXAMPLE = "SHOWEXAMPLE";
@@ -28,7 +29,7 @@ public class MathControl {
     public static int MAX_NUM_DIGITS = 6;
     public static int NUM_DIGITS_FOR_STRUCTURE = 1;
 
-    private Questions questions;
+    //private Questions questions;
     private Questions level1_questions;
     private Questions level2_questions;
     private Questions level3_questions;
@@ -68,7 +69,7 @@ public class MathControl {
         level3_questions = new Questions(json3);
         level4_questions = new Questions(json4);
         level5_questions = new Questions(json5);
-        questions = level1_questions; //default start at level 1
+        //questions = level1_questions; //default start at level 1
     }
 
     public String AssetJSONFile (String filename) throws IOException {
@@ -86,19 +87,28 @@ public class MathControl {
     }
 
     public Question getQuestion(int level, int question) {
+        Questions questions;
         if (level == 1) {
-            return level1_questions.get(question);
-        } else if (level == 2) {
-            return level2_questions.get(question);
+            questions = level1_questions;
+        }
+        else if (level == 2) {
+            questions =  level2_questions;
         }
         else if (level == 3) {
-            return level3_questions.get(question);
+            questions = level3_questions;
         }
         else if (level == 4) {
-            return level4_questions.get(question);
+            questions = level4_questions;
         }
         else if (level == 5) {
-            return level5_questions.get(question);
+            questions = level5_questions;
+        }
+        else {
+            return null;
+        }
+
+        if (question < questions.length()) {
+            return questions.get(question);
         }
         else {
             return null;

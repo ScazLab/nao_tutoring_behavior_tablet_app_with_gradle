@@ -102,6 +102,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         intent.putExtra("SessionNum", Integer.parseInt(sessionNum));
         intent.putExtra("DifficultyGroup", difficultyGroup);
+        intent.putExtra("ExpGroup", expGroup);
         if (difficultyGroup == 1) { //harder questions
             intent.putExtra("QuestionLevel", 3);
             intent.putExtra("QuestionNumber", 0);
@@ -122,7 +123,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         if (v == startMathButton) {
             sessionNum = "1";
-            expGroup = 1;
         }
         startMathQuestions(v);
     }
@@ -139,6 +139,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 if (checked)
                     difficultyGroup = 1;
                 break;
+            case R.id.controlRB:
+                if (checked)
+                    expGroup = 0;
+                break;
+            case R.id.modelRB:
+                if (checked)
+                    expGroup = 1;
         }
     }
 

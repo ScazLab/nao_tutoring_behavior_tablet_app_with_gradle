@@ -94,6 +94,34 @@
 
     </RadioGroup>
 
+    <RadioGroup
+        android:layout_width="562dp"
+        android:layout_height="128dp"
+        android:layout_row="4"
+        android:layout_column="1"
+        android:orientation="horizontal"
+        android:id="@+id/ConditionRG">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Control Group"
+            android:id="@+id/controlRB"
+            android:layout_row="4"
+            android:layout_column="1"
+            android:checked="false"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Model Group"
+            android:id="@+id/modelRB"
+            android:checked="false"
+            android:onClick="onRadioButtonClicked"/>
+
+    </RadioGroup>
+
 
     <Button
         android:layout_width="match_parent"
