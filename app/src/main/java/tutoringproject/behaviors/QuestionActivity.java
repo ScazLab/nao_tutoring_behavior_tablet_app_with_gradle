@@ -710,9 +710,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         if (showingHint == 0) {
             clearView();
         }
+        else if (showingHint % 3 == 0){
+            clearView();
+        }
 
-        hintText.replace('/', '÷');
-        hintText.replace('x', '×');
+        //hintText.replace('/', '÷');
+        //hintText.replace('x', '×');
+        hintText = hintText.replace("x", "\u00D7");
+        hintText = hintText.replace("/", "\u00F7");
 
         showingHint = showingHint + 1;
 

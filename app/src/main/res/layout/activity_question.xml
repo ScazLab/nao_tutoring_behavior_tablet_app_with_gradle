@@ -1002,6 +1002,7 @@
                     android:textSize="@dimen/hint_text_size"
                     style="@style/HintsAndExamples"
                     android:text="First Hint Here"
+                    android:gravity="center"
                     android:visibility="invisible"/>
 
                 <TextView
@@ -1016,6 +1017,7 @@
                     android:text="Second Hint Here"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
+                    android:gravity="center"
                     android:visibility="invisible"
                     />
 
@@ -1028,6 +1030,7 @@
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginVertical="@dimen/activity_vertical_margin"
                     android:layout_gravity="top|center_horizontal"
+                    android:gravity="center"
                     android:layout_marginBottom="97dp"
                     style="@style/HintsAndExamples"
                     android:textSize="@dimen/hint_text_size"
