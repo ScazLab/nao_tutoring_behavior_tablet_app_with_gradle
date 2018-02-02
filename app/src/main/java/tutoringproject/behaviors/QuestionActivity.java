@@ -76,7 +76,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     private long trackQuestionTime = 0;
 
     // ends session at max_session_time seconds
-    private int max_session_time = 180; //3 minutes for testing //this should be 15 minutes for adaptive help study (900 seconds)
+    private int max_session_time = 300; //5 minutes for testing //this should be 15 minutes for adaptive help study (900 seconds)
     private TimeWatch total_elapsed_timewatch;
 
 
