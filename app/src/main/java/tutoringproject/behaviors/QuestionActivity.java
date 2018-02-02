@@ -70,6 +70,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     boolean keyboardEnabled = true;
     boolean inTutorialMode = false;
     boolean inWorkedExample = false;
+    boolean startingNewQuestion = true;
 
     private TimeWatch timeWatch; //timeWatch for calculating time on each individual attempt
     private long trackQuestionTime = 0;
@@ -620,7 +621,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         submitButton.setVisibility(View.VISIBLE);
 
         //FIRST CHECK IF TOTAL TIME FOR SESSION IS UP
-        if (total_elapsed_timewatch.time(TimeUnit.SECONDS) > max_session_time) {
+        if (startingNewQuestion && (total_elapsed_timewatch.time(TimeUnit.SECONDS) > max_session_time)) {
             System.out.println("ABOUT TO LAUNCH COMPLETED SCREEN BECAUSE SESSION TIME IS UP");
             Intent intent = new Intent(this, Completed.class);
 
@@ -1669,6 +1670,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     nextButton.setVisibility(View.VISIBLE);
                     nextButton.setBackground(nextButtonBackground);
                     nextButton.setEnabled(true); //aditi
+                    startingNewQuestion = true;
                 }
                 else if (separatedMessage[0].equals(MathControl.FIRSTQUESTION)) { //make extra case just for FIRST QUESTION to be shown
                     System.out.println("IN QUESTIONACTIVITY, IN MESSAGE RECEIVED, we received FIRSTQUESTION message");
@@ -1800,6 +1802,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         if (data.hasExtra("nextLevel") && data.hasExtra("nextNumber")) {
             nextQuestion = mathControl.getQuestion(data.getExtras().getInt("nextLevel"), data.getExtras().getInt("nextNumber"));
+            startingNewQuestion = false;
             goToNextQuestion();
         }
 
