@@ -533,7 +533,19 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     //System.out.println("QuestionTime: " + Long.toString(questionTime) +"");
                     trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
 
-                    if (answer == Integer.parseInt(currentQuestion.numerator) / Integer.parseInt(currentQuestion.denominator)) {
+                    if (currentQuestion.wordProblem && answer == Integer.parseInt(currentQuestion.answerText)){ //this should work since its a word problem
+                        String message = "CA;" + answer + ";" + trackQuestionTime + ";";
+
+                        TCPClient.singleton.sendMessage(message);
+                        answerText.setBackground(correct_border);
+
+                        resultText.setText("That is correct.");
+                        resultText.setVisibility(View.VISIBLE);
+                        nextButton.setVisibility(View.VISIBLE);
+                        submitButton.setVisibility(View.INVISIBLE);
+                    }
+
+                    else if (answer == Integer.parseInt(currentQuestion.numerator) / Integer.parseInt(currentQuestion.denominator)) {
                         int remainder = Integer.parseInt(currentQuestion.numerator) % Integer.parseInt(currentQuestion.denominator);
                         // if both the answer and remainder are correct (0 if there is no remainder) indicate that.
                         // show the next question button, and send a message to the server
