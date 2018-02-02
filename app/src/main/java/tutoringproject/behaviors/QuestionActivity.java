@@ -1539,6 +1539,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         TextView current_step_box;
         if (parsed[0].equals("1")) {
             current_step_box = (TextView) findViewById(R.id.quotientInMultiplication);
+            if (!current_step_box.isEnabled()){
+                current_step_box = (TextView) findViewById(R.id.quotientInDivision);
+            }
         } else {
             current_step_box = (TextView) findViewById(R.id.quotientInDivision);
         }
