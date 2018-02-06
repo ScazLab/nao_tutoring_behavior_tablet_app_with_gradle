@@ -19,10 +19,10 @@ import java.util.Random;
 public class TicTacToeActivity extends Activity implements TCPClientOwner {
 
     private enum SquareState { EMPTY, X, O }
-    private enum ExpGroup { FIXED, REWARD, FRUSTRATION }
+    //private enum ExpGroup { FIXED, REWARD, FRUSTRATION }
 
     private SquareState[][] board = new SquareState[3][3];
-    private ExpGroup expGroup = ExpGroup.FIXED;
+    private int expGroup = 0;
     private Random gen = new Random();
     private long startTime = System.currentTimeMillis();
 
@@ -83,6 +83,9 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
             "That was fun! You are really good at tic tac toe! Let's get back to our math problems " +
                     "now. Click the button at the bottom of the tablet to return to the tutoring session.";
 
+    public String START_MSG =
+            "Lets play a game of tic-tac-toe. You will be exes, and I will be ohs. You can go first. Click any square on the board.";
+
     // Tablet text strings
     public String SQUARE_OCCUPIED_TEXT =
             "Sorry!\nThis square already has something in it.\nTry picking another square.";
@@ -98,14 +101,14 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
         // <expGroup> is no longer used in this class. But I'm going to leave it here just in case
         // we find a use for it in the future.
         Bundle extras = getIntent().getExtras();
-        int expGroupIndex = Integer.parseInt(extras.getString("expGroup"));
-        if (expGroupIndex == 1) {
-            expGroup = ExpGroup.FIXED;
-        } else if (expGroupIndex == 2) {
-            expGroup = ExpGroup.REWARD;
-        } else if (expGroupIndex == 3) {
-            expGroup = ExpGroup.FRUSTRATION;
-        }
+        expGroup = Integer.parseInt(extras.getString("expGroup"));
+//        if (expGroupIndex == 1) {
+//            expGroup = ExpGroup.FIXED;
+//        } else if (expGroupIndex == 2) {
+//            expGroup = ExpGroup.REWARD;
+//        } else if (expGroupIndex == 3) {
+//            expGroup = ExpGroup.FRUSTRATION;
+//        }
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -125,13 +128,20 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
         instructions       = (TextView) findViewById(R.id.instructions);
         returnButton       = (Button)   findViewById(R.id.returnButton);
 
+        returnButton.setVisibility(View.INVISIBLE); //start out with button being invisible
+
         // Transfer control of TCP client from MathActivity to this activity.
         if (TCPClient.singleton != null ) {
             TCPClient.singleton.setSessionOwner(this);
         }
 
         if (TCPClient.singleton != null) {
-            TCPClient.singleton.sendMessage("TICTACTOE-START;-1;-1;");
+            if (expGroup==0) {
+                TCPClient.singleton.sendMessage("TICTACTOE-START;-1;-1;"+START_MSG);
+            }
+            else {
+                TCPClient.singleton.sendMessage("TICTACTOE-START;-1;-1;");
+            }
         }
     }
 
@@ -380,9 +390,17 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
 
         if (msg.equals("SPEAKING-START")){
             disableBoardButtons();
+            if (returnButton.getVisibility()==View.VISIBLE)
+                disableReturnButton();
         }
         else if (msg.equals("SPEAKING-END")) {
-            enableBoardButtons();
+
+            if (returnButton.getVisibility()==View.VISIBLE) {
+                enableReturnButton();
+            }
+            else{
+                enableBoardButtons();
+            }
         }
         else if (   msg.equals("TICTACTOE-START")
                 || msg.equals("TICTACTOE-STUDENTTURN")) {
@@ -391,6 +409,8 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
         } else if (   msg.equals("TICTACTOE-WIN")
                 || msg.equals("TICTACTOE-TIE")
                 || msg.equals("TICTACTOE-LOSS")) {
+
+            disableBoardButtons();
             if (System.currentTimeMillis() - startTime > TIME_LIMIT * 1000) {
                 if (TCPClient.singleton != null) {
                     TCPClient.singleton.sendMessage("TICTACTOE-END;-1;-1;" + END_MSG);
@@ -431,6 +451,8 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
                 setResult(Activity.RESULT_OK, intent);
             }
 
+            disableBoardButtons();
+            returnButton.setVisibility(View.VISIBLE);
             enableReturnButton();
             instructions.setText(CLICK_RETURN_BUTTON_TEXT);
         }

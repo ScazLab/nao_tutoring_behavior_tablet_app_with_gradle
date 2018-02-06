@@ -56,7 +56,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.start_screen);
 
         iPandPort = (EditText) findViewById(R.id.IPandPort);
-        iPandPort.setText("172.27.214.83:9090");
+        iPandPort.setText("192.168.1.106:9090");
         connectButton = (Button) findViewById(R.id.ConnectButton);
         connectionStatus = (TextView) findViewById(R.id.ConnectionStatus);
         startMathButton = (Button)findViewById(R.id.startMathButton);

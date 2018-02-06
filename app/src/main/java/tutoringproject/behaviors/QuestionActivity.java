@@ -71,6 +71,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     boolean inTutorialMode = false;
     boolean inWorkedExample = false;
     boolean startingNewQuestion = true;
+    boolean giveBreakHalfway = false;
 
     private TimeWatch timeWatch; //timeWatch for calculating time on each individual attempt
     private long trackQuestionTime = 0;
@@ -622,6 +623,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     public void goToNextQuestion() {
         final Drawable normal_answer = ContextCompat.getDrawable(this, R.drawable.answer_background);
         final Drawable normal_remainder = ContextCompat.getDrawable(this, R.drawable.remainder_background);
+
+        if (!giveBreakHalfway && expGroup==0 && (total_elapsed_timewatch.time(TimeUnit.SECONDS)> max_session_time/2.0)) {
+            //if they didn't already get their break during a question and
+            //if in the control group and student is halfway through the session, they get a break
+            giveBreakHalfway = true;
+            startTicTacToe();
+            return;
+        }
 
         // progress to the next question and display it
         answerText.setEnabled(true); //aditi
@@ -1811,6 +1820,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (TCPClient.singleton != null)
             TCPClient.singleton.setSessionOwner(this);
+
+        //if (expGroup==0){
+        //    giveBreakHalfway = false;
+        //}
 
         if (data.hasExtra("nextLevel") && data.hasExtra("nextNumber")) {
             nextQuestion = mathControl.getQuestion(data.getExtras().getInt("nextLevel"), data.getExtras().getInt("nextNumber"));
