@@ -77,7 +77,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     private long trackQuestionTime = 0;
 
     // ends session at max_session_time seconds
-    private int max_session_time = 300; //5 minutes for testing //this should be 15 minutes for adaptive help study (900 seconds)
+    private int max_session_time = 900; //10 minutes for testing //this should be 15 minutes for adaptive help study (900 seconds)
     private TimeWatch total_elapsed_timewatch;
 
 
@@ -738,7 +738,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         //hintText.replace('/', '÷');
         //hintText.replace('x', '×');
-        hintText = hintText.replace("x", "\u00D7");
+        hintText = hintText.replace(" x ", " \u00D7 ");
         hintText = hintText.replace("/", "\u00F7");
 
         showingHint = showingHint + 1;
@@ -1663,7 +1663,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             }
             else {
                 String[] separatedMessage = message.split(";");
-                if (separatedMessage[0].equals(MathControl.QUESTIONMESSAGE)     // set the next question to the specified question
+                if (separatedMessage[0].equals(MathControl.SETUPMESSAGE)){
+                    expGroup = Integer.parseInt(separatedMessage[1]);
+                }
+
+                else if (separatedMessage[0].equals(MathControl.QUESTIONMESSAGE)     // set the next question to the specified question
                         && separatedMessage.length == 3) {
                     System.out.println("IN QUESTIONACTIVITY, IN MESSAGE RECEIVED, we received QUESTION message and message split length is 3");
                     nextQuestion = mathControl.getQuestion(separatedMessage[1],separatedMessage[2]);
@@ -1693,6 +1697,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     nextButton.setEnabled(true); //aditi
                     startingNewQuestion = true;
                 }
+
                 else if (separatedMessage[0].equals(MathControl.FIRSTQUESTION)) { //make extra case just for FIRST QUESTION to be shown
                     System.out.println("IN QUESTIONACTIVITY, IN MESSAGE RECEIVED, we received FIRSTQUESTION message");
                     answerText.setVisibility(View.VISIBLE);
@@ -1700,12 +1705,15 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     nextAction = MathControl.SHOWQUESTION; // aditi - not sure if we need this
                     goToNextQuestion();
                 }
+
                 else if (separatedMessage[0].equals(MathControl.STARTTICTACTOE)) {  // start a game of tictactoe
                     startTicTacToe();
                 }
+
                 else if (separatedMessage[0].equals(MathControl.SHOWTEXTHINT)) {        // show text
                     showHints(separatedMessage[1]);
                 }
+
                 else if (separatedMessage[0].equals(MathControl.SHOWSTRUCTURE)) {   // show the box structure
                     if (separatedMessage.length > 1) {                              // if numbers are given, use those
                         int num = Integer.parseInt(separatedMessage[1].split("-")[0]);
@@ -1715,11 +1723,13 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         structureHint();
                     }
                 }
+
                 else if (separatedMessage[0].equals(MathControl.SHOWSTRUCTUREFORTUTORIAL)) {    // if for tutorial
                     int num = Integer.parseInt(separatedMessage[1].split("-")[0]);              // call the same showStructure() function
                     int dem = Integer.parseInt(separatedMessage[1].split("-")[1]);              // for the given numbers
                     showStructure(num, dem, true, separatedMessage[2]);                         // but give the answers and set tutorial to true
                 }
+
                 else if (separatedMessage[0].equals(MathControl.FILLSTRUCTURE)) {               // fill in steps for a tutorial
                     if (separatedMessage.length > 2 && separatedMessage[1].equals("EASY")) {    // whether easy or structure
                         fillInEasy(separatedMessage[2]);
@@ -1738,6 +1748,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         }
                     }
                 }
+
                 else if (separatedMessage[0].equals(MathControl.SHOWEASYTUTORIAL)) {            // show balls in boxes for an easy tutorial
                     startEasyTutorial(separatedMessage[1]);
                 }
