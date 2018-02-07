@@ -22,6 +22,7 @@ public class Questions {
     public static final String KEY_NUMERATOR = "Numerator";
     public static final String KEY_DENOMINATOR = "Denominator";
     public static final String KEY_SPOKEN_QUESTION = "Spoken Question";
+    public static final String KEY_ZEROS_PROBLEM = "Zeros";
 
     ArrayList<Question> questions = new ArrayList<Question>();
 

@@ -84,7 +84,7 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
                     "now. Click the button at the bottom of the tablet to return to the tutoring session.";
 
     public String START_MSG =
-            "Lets play a game of tic-tac-toe. You will be exes, and I will be ohs. You can go first. Click any square on the board.";
+            "Lets take a break and play a game of tic-tac-toe. You will be exes, and I will be ohs. You can go first. Click any square on the board.";
 
     // Tablet text strings
     public String SQUARE_OCCUPIED_TEXT =
