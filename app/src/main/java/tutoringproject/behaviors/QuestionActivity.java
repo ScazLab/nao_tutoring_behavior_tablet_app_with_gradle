@@ -49,7 +49,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     Button nextButton;
     Button checkAnswers;
     NoImeEditText answerText;
-    TextView wordProblem;
+    AutoResizeTextView wordProblem;
     TextView resultText;
     Question currentQuestion;
     Question nextQuestion;
@@ -142,6 +142,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             @Override
             public void onKey(int primaryCode, int[] keyCodes) {
                 if (keyboardEnabled) {
+                    final TextView multiplicationAnswer = (TextView) findViewById(R.id.quotientInMultiplication);
+                    final TextView divisionAnswer = (TextView) findViewById(R.id.quotientInDivision);
                     //Here check the primaryCode to see which key is pressed
                     //based on the android:codes property
                     EditText target = (EditText) getWindow().getCurrentFocus();
@@ -149,6 +151,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
                     int num_digits = MathControl.MAX_NUM_DIGITS;
                     if (!answerText.hasFocus())     num_digits = MathControl.NUM_DIGITS_FOR_STRUCTURE;
+                    if (multiplicationAnswer.hasFocus() || divisionAnswer.hasFocus()){
+                        num_digits = MathControl.NUM_DIGITS_FOR_EASY_TUTORIAL;
+                    }
 
                     if (target.isEnabled()) { // aditi - keyboard should only work in textboxes that are ENABLED
                         if (primaryCode >= 0 && primaryCode <= 9) {
@@ -218,7 +223,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         resultText = (TextView) findViewById(R.id.MathAnswer);  // tells you if correct or incorrect
         remainderBox = (NoImeEditText) findViewById(R.id.Remainder); // this and the R appear only if there
         remainderR = (TextView) findViewById(R.id.R);           // is a remainder
-        wordProblem = (TextView) findViewById(R.id.WordQuestion);
+        wordProblem = (AutoResizeTextView) findViewById(R.id.WordQuestion);
+
+
 
         //set stuff to be invisible before first problem shows up
         submitButton.setVisibility(View.INVISIBLE);
@@ -689,7 +696,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         // show the remainder only if the answer has one
         System.out.println("remainder for question " + Integer.toString(Integer.parseInt(nextQuestion.numerator) % Integer.parseInt(nextQuestion.denominator)));
-        if (Integer.parseInt(nextQuestion.numerator) % Integer.parseInt(nextQuestion.denominator) != 0) {
+        if (!nextQuestion.wordProblem && (Integer.parseInt(nextQuestion.numerator) % Integer.parseInt(nextQuestion.denominator) != 0)) {
             remainderBox.setVisibility(View.VISIBLE);
             remainderBox.setEnabled(true);
             remainderR.setVisibility(View.VISIBLE);
@@ -1060,9 +1067,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         ImageView bar1 = (ImageView) findViewById(R.id.bar1);
         ImageView bar2 = (ImageView) findViewById(R.id.bar2);
         ImageView bar3 = (ImageView) findViewById(R.id.bar3);
+        ImageView bar4 = (ImageView) findViewById(R.id.bar4);
         ImageView subbar1 = (ImageView) findViewById(R.id.subtractionbar1);
         ImageView subbar2 = (ImageView) findViewById(R.id.subtractionbar2);
         ImageView subbar3 = (ImageView) findViewById(R.id.subtractionbar3);
+        ImageView subbar4 = (ImageView) findViewById(R.id.subtractionbar4);
 
         Drawable normal_input = getResources().getDrawable(R.drawable.input_background);
 
@@ -1110,9 +1119,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         bar1.setVisibility(View.INVISIBLE);
         bar2.setVisibility(View.INVISIBLE);
         bar3.setVisibility(View.INVISIBLE);
+        bar4.setVisibility(View.INVISIBLE);
         subbar1.setVisibility(View.INVISIBLE);
         subbar2.setVisibility(View.INVISIBLE);
         subbar3.setVisibility(View.INVISIBLE);
+        subbar4.setVisibility(View.INVISIBLE);
 
         for (int i = 1; i< arrows.length; i++) {
             for (int j = 1; j<arrows[i].length; j++) {

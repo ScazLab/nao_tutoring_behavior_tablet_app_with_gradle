@@ -77,20 +77,19 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
     };
     public String[] RESTART_MSGS = {
             "Let's play again! You can go first.",
-            "How about one more game. Click any square on the board."
+            "How about one more game. Press any square on the board."
     };
     public String END_MSG =
-            "That was fun! You are really good at tic tac toe! Let's get back to our math problems " +
-                    "now. Click the button at the bottom of the tablet to return to the tutoring session.";
+            "That was fun! Press the button on the screen to move on!";
 
     public String START_MSG =
-            "Lets take a break and play a game of tic-tac-toe. You will be exes, and I will be ohs. You can go first. Click any square on the board.";
+            "Lets take a break and play a game of tic-tac-toe. You will be exes, and I will be ohs. You can go first. Press any square on the board.";
 
     // Tablet text strings
     public String SQUARE_OCCUPIED_TEXT =
             "Sorry!\nThis square already has something in it.\nTry picking another square.";
     public String CLICK_RETURN_BUTTON_TEXT =
-            "Click the button below to return to the tutoring session.";
+            "Press the button below to return to the tutoring session.";
 
     // Constructor =================================================================================
 
