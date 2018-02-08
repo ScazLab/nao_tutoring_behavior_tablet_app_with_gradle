@@ -77,7 +77,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     private long trackQuestionTime = 0;
 
     // ends session at max_session_time seconds
-    private int max_session_time = 900; //10 minutes for testing //this should be 15 minutes for adaptive help study (900 seconds)
+    private int max_session_time = 900; //3 minutes for testing //this should be 15 minutes for adaptive help study (900 seconds)
+    private double proportion_time_till_break = 0.4;
     private TimeWatch total_elapsed_timewatch;
 
 
@@ -603,6 +604,13 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                                             // next question before we know what it is or if a
                                             // tutoring behavior should be given first
 
+
+
+                    if ((total_elapsed_timewatch.time(TimeUnit.SECONDS) > max_session_time)) {
+                        endSession();
+                    }
+
+
                     timeWatch.reset(); //reset the attempt timer after attempt is submitted
                     trackQuestionTime = 0;
                 }
@@ -627,11 +635,26 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 //        return super.dispatchTouchEvent(ev);
 //    }
 
+    public void endSession() {
+        if ((total_elapsed_timewatch.time(TimeUnit.SECONDS) > max_session_time)) {
+            System.out.println("ABOUT TO LAUNCH COMPLETED SCREEN BECAUSE SESSION TIME IS UP");
+            Intent intent = new Intent(this, Completed.class);
+
+            if (TCPClient.singleton != null) {
+                TCPClient.singleton.sendMessage("END;" + Integer.toString(nextQuestion.questionID));
+                TCPClient.singleton.stopClient();
+            }
+
+            startActivity(intent);
+            return;
+        }
+    }
+
     public void goToNextQuestion() {
         final Drawable normal_answer = ContextCompat.getDrawable(this, R.drawable.answer_background);
         final Drawable normal_remainder = ContextCompat.getDrawable(this, R.drawable.remainder_background);
 
-        if (!giveBreakHalfway && expGroup==0 && (total_elapsed_timewatch.time(TimeUnit.SECONDS)> max_session_time/2.0)) {
+        if (!giveBreakHalfway && expGroup==0 && (total_elapsed_timewatch.time(TimeUnit.SECONDS)> (max_session_time*proportion_time_till_break))) {
             //if they didn't already get their break during a question and
             //if in the control group and student is halfway through the session, they get a break
             giveBreakHalfway = true;
@@ -726,7 +749,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
     public void enableButtons() {
         System.out.println("MATHACTIVITY: IN enableButtons method!");
-        if (!inTutorialMode)
+        if (!inTutorialMode && !inWorkedExample)
             submitButton.setEnabled(true); // aditi - only enable the submitButton if not doing an interactive tutorial
         nextButton.setEnabled(true);
         keyboardEnabled = true;
@@ -1664,6 +1687,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         else {
             if (message.equals("SPEAKING-END")) {           // if robot is not speaking, buttons can be enabled
                 if (inWorkedExample){
+                    System.out.println("RECEIVED SPEAKING-END IN WORKED EXAMPLE");
                     timeWatch.reset();
                     inWorkedExample = false;
                 }
@@ -1675,6 +1699,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             else {
                 String[] separatedMessage = message.split(";");
                 if (separatedMessage[0].equals(MathControl.SETUPMESSAGE)){
+                    System.out.println("RECEIVED SETUP MESSAGE AND ASSIGNING EXPGROUP VARIABLE!");
                     expGroup = Integer.parseInt(separatedMessage[1]);
                 }
 
@@ -1747,9 +1772,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     } else {
                         if (separatedMessage.length > 1) {
                             if (!inWorkedExample) {
+                                System.out.println("NOW WE ARE IN A WORKED EXAMPLE");
                                 trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
                                 timeWatch.reset();
                                 inWorkedExample = true;
+                                disableButtons();
                             }
                             fillInBoxes(separatedMessage[1]); //this is where we are filling in boxes for a WORKED EXAMPLE
 
