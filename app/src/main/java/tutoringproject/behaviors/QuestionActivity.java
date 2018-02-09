@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -28,11 +29,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.widget.Toast;
 
 
 import org.w3c.dom.Text;
 
 import java.nio.channels.OverlappingFileLockException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 
@@ -81,8 +88,92 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     private double proportion_time_till_break = 0.4;
     private TimeWatch total_elapsed_timewatch;
 
+    //variables for prompt timer during each attempt
+    private Timer promptTimer;
+    private TimerTask promptTimerTask;
+    private final Handler handler = new Handler();
+    private int prompt_time_per_question = 180*1000; //should be 3 minutes (180 seconds)
+
+    private Timer endOfSessionTimer;
+    private TimerTask endOfSessionTimerTask;
+    private final Handler endOfSessionHandler = new Handler();
+    private int end_of_session_time = max_session_time*1000;
 
     private KeyboardView mKeyboardView;
+
+
+    private void startEndOfSessionTimer(long delay){
+        endOfSessionTimer = new Timer();
+
+        endOfSessionTimerTask = new TimerTask() {
+            public void run() {
+                //use a handler to run a toast that shows the current timestamp
+                handler.post(new Runnable() {
+                    public void run() {
+                        //get the current timeStamp
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd:MMMM:yyyy HH:mm:ss a");
+                        final String strDate = simpleDateFormat.format(calendar.getTime());
+
+                        //show the toast, for testing purposes only
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(getApplicationContext(), strDate, duration);
+//                        toast.show();
+
+                        sendFinalPrompt();
+                    }
+                });
+
+            }
+        };
+
+        endOfSessionTimer.schedule(endOfSessionTimerTask, end_of_session_time);
+    }
+
+    private void startTimer(long delay) {
+        //set new Timer
+        promptTimer = new Timer();
+
+        //init TimerTasks's job
+        initializeTimerTask();
+
+        //schedule the timer, to execute after delay
+        promptTimer.schedule(promptTimerTask, delay);
+
+    }
+
+    private void initializeTimerTask() {
+        promptTimerTask = new TimerTask() {
+            public void run() {
+                //use a handler to run a toast that shows the current timestamp
+                handler.post(new Runnable() {
+                    public void run() {
+                        //get the current timeStamp
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd:MMMM:yyyy HH:mm:ss a");
+                        final String strDate = simpleDateFormat.format(calendar.getTime());
+
+                        //show the toast, for testing purposes only
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(getApplicationContext(), strDate, duration);
+//                        toast.show();
+
+                        sendPrompt();
+                    }
+                });
+
+            }
+        };
+    }
+
+    private void stopTimerTask() {
+        //stop the timer, if it's not already null
+        if (promptTimer != null) {
+            promptTimer.cancel();
+            promptTimer = null;
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,6 +294,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         total_elapsed_timewatch = TimeWatch.start(); //aditi - start total session timer
         timeWatch = TimeWatch.start();
         trackQuestionTime = 0;
+
+        startEndOfSessionTimer(end_of_session_time);
 
         // get the first question and display it
         mathControl = new MathControl(this);
@@ -531,6 +624,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             public void onClick(View view) {
                 // parse the input given as an answer
                 if (answerText.getText().length() > 0) {
+                    stopTimerTask(); //stop prompt timer since student entered an answer
+
                     int answer = Integer.parseInt(answerText.getText().toString());
                     int remainder_answer = 0;
                     if (remainderBox.getText().length()> 0 ) {
@@ -613,6 +708,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
                     timeWatch.reset(); //reset the attempt timer after attempt is submitted
                     trackQuestionTime = 0;
+
+                    startTimer(prompt_time_per_question);
                 }
             }
         });
@@ -626,6 +723,38 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         enableButtons();
     }
+
+
+    public void sendPrompt(){
+        Random gen = new Random();
+        String[] msgList = {
+                "Try entering your best guess so we can keep going!",
+                "Try making an attempt so we can move on!",
+                "Go ahead and enter your best guess so we can keep going!"
+        };
+        String prompt_message = msgList[gen.nextInt(msgList.length)];
+
+        //Send message to tablet so robot can prompt student
+        if (TCPClient.singleton != null)
+            TCPClient.singleton.sendMessage("PROMPT;" + prompt_message + ";");
+
+        stopTimerTask();
+        startTimer(prompt_time_per_question); //in case they don't respond to the prompt so we start another one
+    }
+
+    public void sendFinalPrompt(){
+        String prompt_message = "We are almost out of time for today! Try entering your last attempt!";
+
+        //Send message to tablet so robot can prompt student
+        if (TCPClient.singleton != null)
+            TCPClient.singleton.sendMessage("PROMPT;" + prompt_message + ";");
+
+        if (endOfSessionTimer != null) {
+            endOfSessionTimer.cancel();
+            endOfSessionTimer = null;
+        }
+    }
+
 
 //    @Override
 //    public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -737,6 +866,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         // alert server that we are showing the next question
         TCPClient.singleton.sendMessage("SHOWING-QUESTION");
 
+        // stops old timer and starts new timer task
+        stopTimerTask();
+        startTimer(prompt_time_per_question);
+
     }
 
     public void disableButtons() {
@@ -837,6 +970,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         inTutorialMode = true; //aditi - set tutorial mode true for easy tutorial
         trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
         timeWatch.reset();
+        stopTimerTask();
 
         // there are a lot of nested views here
         // the top view contains the whole illustration
@@ -1053,6 +1187,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         answerText.requestFocus(); // aditi - after tutorial is done, answer should have focus
                         timeWatch.reset(); //reset since student will go back to working on attempt
                         inTutorialMode = false;
+                        startTimer(prompt_time_per_question);
                     }
                     else {
                         message = "TUTORIAL-STEP-EASY;INCOMPLETE";
@@ -1219,6 +1354,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 remainderBox.setEnabled(true);
             }
             timeWatch.reset(); // reset because now student goes back to working on problem
+            startTimer(prompt_time_per_question);
             submitButton.setEnabled(true);
 
         }
@@ -1408,6 +1544,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             inTutorialMode = true; //aditi - setting tutorial mode flag
             trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
             timeWatch.reset();
+            stopTimerTask();
             resetRBoxAnswers();
             // extract answers for all of the boxes to be able to check them later
             final String[] answerList = answers.split(":");
@@ -1689,6 +1826,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 if (inWorkedExample){
                     System.out.println("RECEIVED SPEAKING-END IN WORKED EXAMPLE");
                     timeWatch.reset();
+                    startTimer(prompt_time_per_question);
                     inWorkedExample = false;
                 }
                 enableButtons();
@@ -1773,6 +1911,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         if (separatedMessage.length > 1) {
                             if (!inWorkedExample) {
                                 System.out.println("NOW WE ARE IN A WORKED EXAMPLE");
+                                stopTimerTask(); // don't count this time when deciding to prompt them
                                 trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
                                 timeWatch.reset();
                                 inWorkedExample = true;

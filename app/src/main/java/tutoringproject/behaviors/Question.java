@@ -13,7 +13,7 @@ public class Question {
     public String answerText;
     public String spokenQuestion;
     public boolean wordProblem;
-    public boolean zerosProblem;
+    //public boolean zerosProblem;
 
     public Question (JSONObject question){
         try {
@@ -24,7 +24,7 @@ public class Question {
             answerText = question.getString(Questions.KEY_ANSWER);
             spokenQuestion = question.getString(Questions.KEY_SPOKEN_QUESTION);
             wordProblem = question.getBoolean(Questions.KEY_WORD_PROBLEM); // this is a boolean indicating whether this problem is a word problem
-            zerosProblem = question.getBoolean(Questions.KEY_ZEROS_PROBLEM); // boolean for L5 questions indicating one question type
+            //zerosProblem = question.getBoolean(Questions.KEY_ZEROS_PROBLEM); // boolean for L5 questions indicating one question type
 
         }catch (Exception e){
             e.printStackTrace();
