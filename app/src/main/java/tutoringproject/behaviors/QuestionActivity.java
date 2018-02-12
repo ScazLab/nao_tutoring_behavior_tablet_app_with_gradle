@@ -195,6 +195,16 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         int level = extras.getInt("QuestionLevel");
         int number = extras.getInt("QuestionNumber");
 
+        int max_time = Integer.parseInt(extras.getString("maxTime"));
+        if (max_time != -1) {  //means different max_time specified
+            max_session_time = max_time * 60; //we provide this number in minutes on start screen
+        }
+
+        int breakTaken = extras.getInt("breakTaken");
+        if (breakTaken==1){
+            giveBreakHalfway = true; //we already took a break then loaded a session so don't give another one
+        }
+
         //if (sessionNum>1){
             //use data file to figure out what index to start pulling questions
         //    number = 3; //for now just test with number other than 0

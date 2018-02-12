@@ -131,4 +131,53 @@
         android:layout_row="7"
         android:layout_column="1" />
 
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_row="8">
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/MaxTime"
+            android:layout_row="8"
+            android:layout_column="1" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Session Length for loading (in minutes)" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:layout_width="562dp"
+        android:layout_height="64dp"
+        android:layout_row="9"
+        android:layout_column="1"
+        android:orientation="horizontal"
+        android:id="@+id/fixedBreakRG">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Break already taken"
+            android:id="@+id/yesRB"
+            android:layout_row="9"
+            android:layout_column="1"
+            android:checked="false"
+            android:onClick="onBreakRadioButtonClicked"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No break yet"
+            android:id="@+id/noRB"
+            android:checked="false"
+            android:onClick="onBreakRadioButtonClicked"/>
+
+    </RadioGroup>
+
 </LinearLayout>

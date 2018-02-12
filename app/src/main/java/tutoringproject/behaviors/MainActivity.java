@@ -40,12 +40,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView connectionStatus;
 //    private EditText startQuestionNum;
     private EditText conditionNum;
-//    private EditText maxTime;
+    private EditText maxTime;
     private String sessionNum;
     private int expGroup;
     private int difficultyGroup;
 //    private EditText fixedBreakInterval;
 //    private EditText breaksGiven;
+    private int breakTaken = 0; //default to not having taken break yet
+
 
 
     @Override
@@ -64,6 +66,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         sessionNumberBox = (EditText) findViewById(R.id.SessionNumber);
 
         startMathButton.setOnClickListener(this);
+
+        maxTime = (EditText) findViewById(R.id.MaxTime);
+        maxTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                maxTime.setText("");
+            }
+        });
 
     }
 
@@ -91,11 +101,33 @@ public class MainActivity extends Activity implements View.OnClickListener {
             //return;
         }
 
+        String maxTimeString = maxTime.getText().toString();
+        boolean load = false;
+        if (maxTimeString.equals("")) {
+            load = false;
+        }
+        else {
+            load = true;
+        }
+
+        try {
+            Integer.parseInt(maxTimeString);
+        } catch (NumberFormatException e) {  //if nothing entered into field
+            maxTimeString = "-1";
+        }
+        intent.putExtra("maxTime", maxTimeString);
+
         //send message to computer to convey session starting
         if (TCPClient.singleton != null) {
             String startMessage = "";
 
-            startMessage = "START;" + pid + ";" + sessionNum + ";" + expGroup + ";" + difficultyGroup;
+            if (load){
+                startMessage = "LOAD;" + pid + ";" + sessionNum + ";" + expGroup + ";" + difficultyGroup;
+            }
+
+            else {
+                startMessage = "START;" + pid + ";" + sessionNum + ";" + expGroup + ";" + difficultyGroup;
+            }
 
             mTcpClient.sendMessage(startMessage);
         }
@@ -112,6 +144,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             intent.putExtra("QuestionNumber", 0);
         }
 
+        intent.putExtra("BreakTaken", breakTaken);
         startActivity(intent);
     }
 
@@ -146,6 +179,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.modelRB:
                 if (checked)
                     expGroup = 1;
+        }
+    }
+
+    public void onBreakRadioButtonClicked(View view){
+        boolean checked = ((RadioButton) view).isChecked();
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.yesRB:
+                if (checked)
+                    breakTaken = 1;
+                break;
+            case R.id.noRB:
+                if (checked)
+                    breakTaken = 0;
+                break;
         }
     }
 
