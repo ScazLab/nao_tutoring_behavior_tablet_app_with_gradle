@@ -103,18 +103,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         String maxTimeString = maxTime.getText().toString();
         boolean load = false;
-        if (maxTimeString.equals("")) {
+        if (maxTimeString.equals("-1")) {
             load = false;
         }
         else {
             load = true;
         }
 
-        try {
-            Integer.parseInt(maxTimeString);
-        } catch (NumberFormatException e) {  //if nothing entered into field
-            maxTimeString = "-1";
-        }
+        //try {
+        //    Integer.parseInt(maxTimeString);
+        //} catch (NumberFormatException e) {  //if nothing entered into field
+        //    maxTimeString = "-1";
+        //}
         intent.putExtra("maxTime", maxTimeString);
 
         //send message to computer to convey session starting
@@ -122,6 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             String startMessage = "";
 
             if (load){
+                System.out.println("SENDING LOAD MESSAGE TO ROS NODES");
                 startMessage = "LOAD;" + pid + ";" + sessionNum + ";" + expGroup + ";" + difficultyGroup;
             }
 

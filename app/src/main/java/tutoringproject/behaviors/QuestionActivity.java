@@ -198,9 +198,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         int max_time = Integer.parseInt(extras.getString("maxTime"));
         if (max_time != -1) {  //means different max_time specified
             max_session_time = max_time * 60; //we provide this number in minutes on start screen
+            end_of_session_time = max_session_time * 1000;
         }
 
-        int breakTaken = extras.getInt("breakTaken");
+        int breakTaken = extras.getInt("BreakTaken");
         if (breakTaken==1){
             giveBreakHalfway = true; //we already took a break then loaded a session so don't give another one
         }
