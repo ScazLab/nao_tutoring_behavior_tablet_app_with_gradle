@@ -99,6 +99,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     private final Handler endOfSessionHandler = new Handler();
     private int end_of_session_time = max_session_time*1000;
 
+    private Timer tutorialTimer;
+    private TimerTask tutorialTimerTask;
+    private final Handler tutorialHandler = new Handler();
+    private int tutorial_attempt_time = 120*1000; // should be 2 minutes (120 seconds)
+
     private KeyboardView mKeyboardView;
 
 
@@ -1322,13 +1327,15 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         int answer_to_focus = 0; //aditi: adding check to make sure last step in tutorial with remainders does not get skipped
 
         for (int i = 0; i < answerBoxes.length; i++) {
-            if (!answerBoxes[i].isEnabled() && !(answerBoxes[i].getText().toString().equals("R"))) {
+            if (!answerBoxes[i].isEnabled() && !(answerBoxes[i].getText().toString().equals("R")) && answerBoxes[i].getVisibility()==View.VISIBLE) {
                     answerBoxes[i].setEnabled(true);
                     answerBoxes[i].setBackground(current_input);
                     answer_to_focus = i;
                     break;
             }
         }
+
+        System.out.println("IN FOCUSNEXTSTEPTUTORIAL METHOD AND ANSWER_TO_FOCUS IS: " + answer_to_focus);
 
         for (int i = 0; i < rBoxes.length ; i++) {
             for (int j = 0; j <rBoxes[i].length; j++) { //aditi - trying to debug added rBoxes[i] instead of rBoxes
@@ -1354,10 +1361,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             }
         }
 
-        //System.out.println("IN FOCUSNEXTSTEPTUTORIAL METHOD AND ROW_TO_FOCUS IS: " + row_to_focus);
+        System.out.println("IN FOCUSNEXTSTEPTUTORIAL METHOD AND ROW_TO_FOCUS IS: " + row_to_focus);
 
         if (row_to_focus == 0 && answer_to_focus==0){
-            //System.out.println("IN FOCUSNEXTSTEPINTUTORIAL METHOD BEFORE SENDING TUTORIAL-STEP;DONE message");
+            System.out.println("IN FOCUSNEXTSTEPINTUTORIAL METHOD BEFORE SENDING TUTORIAL-STEP;DONE message");
             checkAnswers.setClickable(false);
             checkAnswers.setEnabled(false);
             inTutorialMode = false; //aditi - figure out where to set end of interactive structure tutorial
