@@ -1319,11 +1319,13 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         Drawable current_input = getResources().getDrawable(R.drawable.input_background);
 
         int row_to_focus = 0;
+        int answer_to_focus = 0; //aditi: adding check to make sure last step in tutorial with remainders does not get skipped
 
         for (int i = 0; i < answerBoxes.length; i++) {
             if (!answerBoxes[i].isEnabled() && !(answerBoxes[i].getText().toString().equals("R"))) {
                     answerBoxes[i].setEnabled(true);
                     answerBoxes[i].setBackground(current_input);
+                    answer_to_focus = i;
                     break;
             }
         }
@@ -1354,7 +1356,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
         //System.out.println("IN FOCUSNEXTSTEPTUTORIAL METHOD AND ROW_TO_FOCUS IS: " + row_to_focus);
 
-        if (row_to_focus == 0){
+        if (row_to_focus == 0 && answer_to_focus==0){
             //System.out.println("IN FOCUSNEXTSTEPINTUTORIAL METHOD BEFORE SENDING TUTORIAL-STEP;DONE message");
             checkAnswers.setClickable(false);
             checkAnswers.setEnabled(false);
