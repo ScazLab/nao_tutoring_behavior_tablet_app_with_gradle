@@ -684,13 +684,19 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         remainder_answer = Integer.parseInt(remainderBox.getText().toString());
                     }
 
+                    String time_for_a_break = "nobreak";
+                    if (!giveBreakHalfway && expGroup==0 && (total_elapsed_timewatch.time(TimeUnit.SECONDS) > proportion_time_till_break*max_session_time)) {
+                        //student in expGroup 0 should get break before next attempt so add a flag to IA message if this is true
+                        time_for_a_break = "takebreak";
+                    }
+
                     //store elapsed questionTime
                     //long questionTime = timeWatch.time(TimeUnit.SECONDS);  //stores elapsed time in milliseconds
                     //System.out.println("QuestionTime: " + Long.toString(questionTime) +"");
                     trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
 
                     if (currentQuestion.wordProblem && answer == Integer.parseInt(currentQuestion.answerText)){ //this should work since its a word problem
-                        String message = "CA;" + answer + ";" + trackQuestionTime + ";";
+                        String message = "CA;" + answer + ";" + trackQuestionTime + ";" + time_for_a_break + ";";
 
                         TCPClient.singleton.sendMessage(message);
                         answerText.setBackground(correct_border);
@@ -708,7 +714,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         // also change the border of the answer to green to indicate it is correct
                         if (remainder == 0 || remainder == remainder_answer) {
                             System.out.println("QuestionTime: " + Long.toString(trackQuestionTime) +"");
-                            String message = "CA;" + answer + ";" + trackQuestionTime + ";";
+                            String message = "CA;" + answer + ";" + trackQuestionTime + ";" + time_for_a_break + ";";
 
                             TCPClient.singleton.sendMessage(message);
                             answerText.setBackground(correct_border);
@@ -723,7 +729,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                             // if the remainder is not correct, only change that border, but
                             // still send a message indicating an incorrect answer
                             System.out.println("QuestionTime: " + Long.toString(trackQuestionTime) +"");
-                            String message = "IA;" + answer + ";" + trackQuestionTime + ";";
+                            String message = "IA;" + answer + ";" + trackQuestionTime + ";" + time_for_a_break + ";";
                             TCPClient.singleton.sendMessage(message);
                             resultText.setText(remainderBox.getText() + " is incorrect remainder.");
                             answerText.setBackground(correct_border);
@@ -736,7 +742,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         // if the answer is incorrect, indicate so in colors and send a message to
                         // the server saying so
                         System.out.println("QuestionTime: " + Long.toString(trackQuestionTime) +"");
-                        String message = "IA;" + answer + ";" + trackQuestionTime + ";";
+                        String message = "IA;" + answer + ";" + trackQuestionTime + ";" + time_for_a_break + ";";
                         TCPClient.singleton.sendMessage(message);
                         resultText.setText(answerText.getText() + " is incorrect.");
                         answerText.setBackground(incorrect_border);
@@ -1959,6 +1965,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 }
 
                 else if (separatedMessage[0].equals(MathControl.STARTTICTACTOE)) {  // start a game of tictactoe
+                    if (expGroup==0){
+                        giveBreakHalfway = true;
+                    }
                     startTicTacToe();
                 }
 
