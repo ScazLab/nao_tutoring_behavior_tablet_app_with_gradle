@@ -107,13 +107,49 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     private KeyboardView mKeyboardView;
 
 
+    private void startTutorialTimer(long delay){
+        tutorialTimer = new Timer();
+
+        tutorialTimerTask = new TimerTask() {
+            public void run() {
+                //use a handler to run a toast that shows the current timestamp
+                tutorialHandler.post(new Runnable() {
+                    public void run() {
+                        //get the current timeStamp
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd:MMMM:yyyy HH:mm:ss a");
+                        final String strDate = simpleDateFormat.format(calendar.getTime());
+
+                        //show the toast, for testing purposes only
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(getApplicationContext(), strDate, duration);
+//                        toast.show();
+
+                        sendTimeoutDuringTutorial();
+                    }
+                });
+
+            }
+        };
+
+        tutorialTimer.schedule(tutorialTimerTask, delay);
+
+    }
+
+    public void stopTutorialTimer() {
+        if (tutorialTimer != null) {
+            tutorialTimer.cancel();
+            tutorialTimer = null;
+        }
+    }
+
     private void startEndOfSessionTimer(long delay){
         endOfSessionTimer = new Timer();
 
         endOfSessionTimerTask = new TimerTask() {
             public void run() {
                 //use a handler to run a toast that shows the current timestamp
-                handler.post(new Runnable() {
+                endOfSessionHandler.post(new Runnable() {
                     public void run() {
                         //get the current timeStamp
                         Calendar calendar = Calendar.getInstance();
@@ -132,7 +168,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             }
         };
 
-        endOfSessionTimer.schedule(endOfSessionTimerTask, end_of_session_time);
+        endOfSessionTimer.schedule(endOfSessionTimerTask, delay);
     }
 
     private void startTimer(long delay) {
@@ -741,6 +777,19 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     }
 
 
+    public void sendTimeoutDuringTutorial() {
+
+        if (inTutorialMode) {
+
+            //Send message to tablet so robot can fill in boxes for student
+            if (TCPClient.singleton != null)
+                TCPClient.singleton.sendMessage("TUTORIAL-STEP;TIMEOUT" + ";");
+
+        }
+
+        stopTutorialTimer();
+    }
+
     public void sendPrompt(){
         Random gen = new Random();
         String[] msgList = {
@@ -892,7 +941,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         System.out.println("MATHACTIVITY: IN disableButtons method!");
         submitButton.setEnabled(false);
         nextButton.setEnabled(false);
-        keyboardEnabled = false;
+        if (!inTutorialMode) {
+            keyboardEnabled = false; //aditi: just don't disable the keyboard during a tutorial
+        }
         return;
     }
 
@@ -1361,12 +1412,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             }
         }
 
+        startTutorialTimer(tutorial_attempt_time); //restart tutorial timer after a step was answered correctly
         System.out.println("IN FOCUSNEXTSTEPTUTORIAL METHOD AND ROW_TO_FOCUS IS: " + row_to_focus);
 
         if (row_to_focus == 0 && answer_to_focus==0){
             System.out.println("IN FOCUSNEXTSTEPINTUTORIAL METHOD BEFORE SENDING TUTORIAL-STEP;DONE message");
             checkAnswers.setClickable(false);
             checkAnswers.setEnabled(false);
+            stopTutorialTimer(); //stop tutorial timer because it is done
             inTutorialMode = false; //aditi - figure out where to set end of interactive structure tutorial
             TCPClient.singleton.sendMessage("TUTORIAL-STEP;DONE");
             answerText.setEnabled(true);
@@ -1562,6 +1615,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             exampleStep = 1;
             System.out.println("starting tutorial");
             inTutorialMode = true; //aditi - setting tutorial mode flag
+            startTutorialTimer(tutorial_attempt_time);
             trackQuestionTime += timeWatch.time(TimeUnit.MILLISECONDS);
             timeWatch.reset();
             stopTimerTask();
@@ -1634,6 +1688,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             checkAnswers.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    stopTutorialTimer(); //stop the timer as soon as they made an attempt
+
                     Boolean any_incorrect = false;
                     Boolean finished = true;
 
@@ -1695,6 +1751,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         if (any_incorrect) {
                             message = "TUTORIAL-STEP;INCORRECT";
                             TCPClient.singleton.sendMessage(message);
+                            startTutorialTimer(tutorial_attempt_time);
                         } else {
                             message = "TUTORIAL-STEP;CORRECT";
                             TCPClient.singleton.sendMessage(message);
@@ -1703,6 +1760,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     } else {
                         message = "TUTORIAL-STEP;INCOMPLETE";
                         TCPClient.singleton.sendMessage(message);
+                        startTutorialTimer(tutorial_attempt_time);
                     }
 
 
