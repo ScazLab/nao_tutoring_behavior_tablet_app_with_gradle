@@ -101,6 +101,7 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
         // we find a use for it in the future.
         Bundle extras = getIntent().getExtras();
         expGroup = Integer.parseInt(extras.getString("expGroup"));
+        int breakInitiatedByModel = extras.getInt("breakInitiatedByModel");
 //        if (expGroupIndex == 1) {
 //            expGroup = ExpGroup.FIXED;
 //        } else if (expGroupIndex == 2) {
@@ -135,7 +136,7 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
         }
 
         if (TCPClient.singleton != null) {
-            if (expGroup==0) {
+            if (expGroup==0 && breakInitiatedByModel==0) {
                 TCPClient.singleton.sendMessage("TICTACTOE-START;-1;-1;"+START_MSG);
             }
             else {

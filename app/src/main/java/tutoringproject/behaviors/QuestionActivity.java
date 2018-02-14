@@ -79,6 +79,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     boolean inWorkedExample = false;
     boolean startingNewQuestion = true;
     boolean giveBreakHalfway = false;
+    int breakInitiatedByModel = 0;
 
     private TimeWatch timeWatch; //timeWatch for calculating time on each individual attempt
     private long trackQuestionTime = 0;
@@ -858,6 +859,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             //if they didn't already get their break during a question and
             //if in the control group and student is halfway through the session, they get a break
             giveBreakHalfway = true;
+            breakInitiatedByModel = 0;
             startTicTacToe();
             return;
         }
@@ -1967,6 +1969,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 else if (separatedMessage[0].equals(MathControl.STARTTICTACTOE)) {  // start a game of tictactoe
                     if (expGroup==0){
                         giveBreakHalfway = true;
+                        breakInitiatedByModel = 1;
                     }
                     startTicTacToe();
                 }
@@ -2024,6 +2027,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     public void startTicTacToe() {
         Intent intent = new Intent(this, TicTacToeActivity.class);
         intent.putExtra("expGroup", "" + expGroup);
+        intent.putExtra("breakInitiatedByModel", breakInitiatedByModel);
         startActivityForResult(intent, MathControl.TICTACTOEREQUEST);
 
         enableButtons();
