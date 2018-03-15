@@ -1977,7 +1977,12 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 else if (separatedMessage[0].equals(MathControl.SHOWTEXTHINT)) {        // show text
                     showHints(separatedMessage[1]);
                 }
-
+                else if (separatedMessage[0].equals(MathControl.STARTTEXTEXAMPLE)) {
+                    if (showingHint != 0){
+                        showingHint = 0;
+                    }
+                    showHints(separatedMessage[1]);
+                }
                 else if (separatedMessage[0].equals(MathControl.SHOWSTRUCTURE)) {   // show the box structure
                     if (separatedMessage.length > 1) {                              // if numbers are given, use those
                         int num = Integer.parseInt(separatedMessage[1].split("-")[0]);
